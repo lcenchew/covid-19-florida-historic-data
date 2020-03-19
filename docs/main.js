@@ -8,7 +8,7 @@ function plotData(results) {
       labels: labels,
       datasets: [
         {
-          label: 'Covid-19 Cases',
+          label: 'Hillsborough Covid-19 Cases',
           backgroundColor: 'rgb(255, 99, 132)',
           borderColor: 'rgb(255, 99, 132)',
           data: cases
