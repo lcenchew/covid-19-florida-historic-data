@@ -31,7 +31,7 @@ function getData() {
       .splice(-30)
       .forEach(day => {
         const xhr2 = new XMLHttpRequest();
-        xhr2.open('GET', `assets/data/tampa-${day}.json`);
+        xhr2.open('GET', `assets/data/${day}.json`);
         xhr2.send();
         xhr2.onload = function() {
           results.push({
