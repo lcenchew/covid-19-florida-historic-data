@@ -18,7 +18,7 @@ jobs:
           git status
       - name: Save current data
         run: |
-          FILE=./docs/assets/data/`date +"%Y%m%d"`.json
+          FILE=docs/assets/data/`date +"%Y%m%d"`.json
           if [ -f "$FILE" ]; then
               echo "$FILE exists. Done for today."
           else
@@ -29,7 +29,7 @@ jobs:
               if [ $status -eq 0 ]; then
                   echo $response > $FILE
                   echo "$FILE saved."
-                  echo `date +"%Y%m%d"` >> ./docs/assets/data.txt
+                  echo `date +"%Y%m%d"` >> docs/assets/data.txt
               else
                   echo "curl exit code: ($status) $response"
                   exit $status
@@ -37,7 +37,7 @@ jobs:
           fi
       - name: Save current tampa data
         run: |
-          FILE=./docs/assets/data/`tampa-date +"%Y%m%d"`.json
+          FILE=docs/assets/data/`tampa-date +"%Y%m%d"`.json
           if [ -f "$FILE" ]; then
               echo "$FILE exists. Done for today."
           else
@@ -48,7 +48,7 @@ jobs:
               if [ $status -eq 0 ]; then
                   echo $response > $FILE
                   echo "$FILE saved."
-                  echo `tampa-date +"%Y%m%d"` >> ./docs/assets/tampa-data.txt
+                  echo `tampa-date +"%Y%m%d"` >> docs/assets/tampa-data.txt
               else
                   echo "curl exit code: ($status) $response"
                   exit $status
