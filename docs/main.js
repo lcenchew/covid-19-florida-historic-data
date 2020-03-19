@@ -1,6 +1,6 @@
 function plotData(results) {
   const labels = results.map(x => x.mmdd);
-  const cases = results.map(x => x.attributes.Count_TOTAL);
+  const cases = results.map(x => x.data.features[0].attributes.Count_TOTAL);
   const ctx = document.getElementById('myChart').getContext('2d');
   const chart = new Chart(ctx, {
     type: 'line',
@@ -15,7 +15,16 @@ function plotData(results) {
         }
       ]
     },
-    options: {}
+    options: {
+      scales: {
+        yAxes: [{
+            ticks: {
+                suggestedMin: 0,
+                // suggestedMax: 100
+            }
+        }]
+      }
+    }
   });
 }
 
@@ -33,10 +42,10 @@ function getData() {
         const xhr2 = new XMLHttpRequest();
         xhr2.open('GET', `assets/data/${day}.json`);
         xhr2.send();
-        xhr2.onload = function() {
+        xhr2.onload = function () {
           results.push({
             date: day,
-            mmdd: day.substring(4, 6) + '/' + day.slice(-2),
+            mmdd: day.substring(10, 12) + '/' + day.slice(-2),
             data: JSON.parse(xhr2.response)
           });
         };
