@@ -1,6 +1,6 @@
 function plotData(results) {
   const labels = results.map(x => x.mmdd);
-  const temperatures = results.map(x => x.data.main.temp);
+  const cases = results.map(x => x.attributes.Count_TOTAL);
   const ctx = document.getElementById('myChart').getContext('2d');
   const chart = new Chart(ctx, {
     type: 'line',
@@ -8,10 +8,10 @@ function plotData(results) {
       labels: labels,
       datasets: [
         {
-          label: 'Temperature (\u{2103})',
+          label: 'Covid-19 Cases',
           backgroundColor: 'rgb(255, 99, 132)',
           borderColor: 'rgb(255, 99, 132)',
-          data: temperatures
+          data: cases
         }
       ]
     },
@@ -21,7 +21,7 @@ function plotData(results) {
 
 function getData() {
   const xhr = new XMLHttpRequest();
-  xhr.open('GET', 'assets/data.txt');
+  xhr.open('GET', 'assets/tampa-data.txt');
   xhr.send();
   const results = [];
   xhr.onload = function() {
@@ -31,7 +31,7 @@ function getData() {
       .splice(-30)
       .forEach(day => {
         const xhr2 = new XMLHttpRequest();
-        xhr2.open('GET', `assets/data/${day}.json`);
+        xhr2.open('GET', `assets/data/tampa-${day}.json`);
         xhr2.send();
         xhr2.onload = function() {
           results.push({
