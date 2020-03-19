@@ -1,9 +1,3 @@
-# Storing Weather Data Daily using GitHub Actions
+# Storing Florida COVID-19 Data using Github Actions
 
-Historical Weather Data Collection using GitHub Actions
-
-## [Medium Blog Post](https://codeburst.io/storing-weather-data-daily-using-github-actions-c2b0ed513ca6)
-
-## Temperatures in the past 30 days in Iowa City
-
-[Web visual](https://changhuixu.github.io/historical-weather-data/)
+This repo run nightly github actions to historically track COVID-19 data
