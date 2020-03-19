@@ -65,7 +65,7 @@ jobs:
             git add .
             git commit -a -m "add weather data"
             git remote rm origin
-            git remote add origin https://NickStees:$PUSH_TOKEN@github.com/NickStees/historical-weather-data.git
+            git remote add origin https://NickStees:$PUSH_TOKEN@github.com/NickStees/covid-19-florida-historic-data.git
             git push origin HEAD:master
           else
             echo 'unable to detech changes'
