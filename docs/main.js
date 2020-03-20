@@ -1,6 +1,7 @@
 function plotData(results) {
   const labels = results.map(x => x.mmdd);
   const cases = results.map(x => x.data.features[0].attributes.TotalPositive);
+  const dataSets = [];
   const ctx = document.getElementById('myChart').getContext('2d');
   const chart = new Chart(ctx, {
     type: 'line',
@@ -9,7 +10,7 @@ function plotData(results) {
       datasets: [
         {
           label: 'Hillsborough Covid-19 Cases',
-          backgroundColor: 'rgb(255, 99, 132)',
+          backgroundColor: 'rgba(255, 99, 132, 0)',
           borderColor: 'rgb(255, 99, 132)',
           data: cases
         }
@@ -54,7 +55,7 @@ function getData() {
   return results;
 }
 
-const weather = getData();
+const savedData = getData();
 setTimeout(() => {
-  plotData(weather.sort((a, b) => a.date - b.date));
+  plotData(savedData.sort((a, b) => a.date - b.date));
 }, 1000);

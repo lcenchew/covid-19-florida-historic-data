@@ -20,6 +20,7 @@
 <!-- lodash for working with data -->
 <script src="https://cdn.jsdelivr.net/npm/lodash@4.17.10/lodash.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@2.8.0"></script>
+<script src="https://unpkg.com/vue-chartjs/dist/vue-chartjs.min.js"></script>
   <style>
     #app{ }
     .ranking {
@@ -58,14 +59,7 @@
     </style>
   </head>
   <body>
-    <div class="content">
-      <div class="header">
-        <div class="chartjs-title">Historical Covid-19 Data</div>
-        <div class="chartjs-caption">
-          Covid-19 Data 30 days
-        </div>
-      </div>
-
+    <div class="content container">
       <div id="app" v-cloak>
         <div v-if="hillsborough">
           <div class="row">
@@ -73,8 +67,13 @@
               <div class="text-primary fa-3x"><strong>{{hillsborough.attributes.TotalPositive}}</strong></div>
               <strong>Hillsborough Cases</strong>
               <hr>
-              Age Range: <strong>{{hillsborough.attributes.Range}}</strong><br>
-              Men: <strong>{{hillsborough.attributes.Men}}</strong> | Women: <strong>{{hillsborough.attributes.Women}}</strong><br>
+              <div class="text-primary fa-2x"><strong>{{hillsborough.attributes.Died}}</strong></div>
+              <strong>Deaths</strong>
+              <hr>
+              <div class="text-primary fa-2x"><strong>{{hillsborough.attributes.TotalTests}}</strong></div>
+              <strong>Total Tests</strong><br>
+              <strong>Tests Pending:</strong> {{hillsborough.attributes.TotalPending}} <br>
+              <strong>Tests Negative:</strong> {{hillsborough.attributes.TotalNegative}}
               <hr>
               <a class="btn btn-primary btn-block" href="https://fdoh.maps.arcgis.com/apps/opsdashboard/index.html#/8d0de33f260d444c852a615dc7837c86">Florida's COVID-19 map</a>
             </div>
@@ -105,6 +104,9 @@
 
       <div class="row">
         <div class="col-md-6 col-md-offset-3">
+          <div class="header">
+            <div class="chartjs-title">Historical Covid-19 Data</div>
+          </div>
           <canvas id="myChart"></canvas>
         </div>
       </div>
@@ -114,7 +116,6 @@
 
     <script src="main.js"></script>
     <script>
-
       var app = new Vue({
         el: '#app',
         data: {
