@@ -67,15 +67,14 @@
               <div class="text-primary fa-3x"><strong>{{hillsborough.attributes.TotalPositive}}</strong></div>
               <strong>Hillsborough Cases</strong>
               <hr>
-              <div class="text-primary fa-2x"><strong>{{hillsborough.attributes.Died}}</strong></div>
+              <div class="fa-2x"><strong>{{hillsborough.attributes.Died}}</strong></div>
               <strong>Deaths</strong>
               <hr>
-              <div class="text-primary fa-2x"><strong>{{hillsborough.attributes.TotalTests}}</strong></div>
-              <strong>Total Tests</strong><br>
-              <strong>Tests Pending:</strong> {{hillsborough.attributes.TotalPending}} <br>
-              <strong>Tests Negative:</strong> {{hillsborough.attributes.TotalNegative}}
-              <hr>
-              <a class="btn btn-primary btn-block" href="https://fdoh.maps.arcgis.com/apps/opsdashboard/index.html#/8d0de33f260d444c852a615dc7837c86">Florida's COVID-19 map</a>
+              <div class="text-left">
+                <strong>Total Tested:</strong> <span class="text-primary">{{hillsborough.attributes.TotalTests}}</span><br>
+                <strong>Tests Pending:</strong> {{hillsborough.attributes.TotalPending}} <br>
+                <strong>Tests Negative:</strong> {{hillsborough.attributes.TotalNegative}}
+              </div>
             </div>
             <div class="col-sm-8" >
               <div class="text-center"><strong>Top Cases by Florida County</strong></div>
@@ -102,6 +101,8 @@
         </div>
       </div>
 
+      <hr>
+
       <div class="row">
         <div class="col-md-6">
           <div class="header">
@@ -116,6 +117,10 @@
           <canvas id="myChartState"></canvas>
         </div>
       </div>
+
+      <hr>
+      <a class="btn btn-primary btn-block" href="https://fdoh.maps.arcgis.com/apps/opsdashboard/index.html#/8d0de33f260d444c852a615dc7837c86">Florida's COVID-19 map</a>
+
 
     </div>
 
