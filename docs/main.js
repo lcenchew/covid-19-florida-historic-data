@@ -1,7 +1,6 @@
 function plotData(results) {
   const labels = results.map(x => x.mmdd);
   const cases = results.map(x => x.data.features[0].attributes.TotalPositive);
-  debugger;
   const ctx = document.getElementById('myChart').getContext('2d');
   const chart = new Chart(ctx, {
     type: 'line',
