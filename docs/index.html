@@ -70,11 +70,11 @@
         <div v-if="hillsborough">
           <div class="row">
             <div class="col-sm-4 text-center" >
-              <div class="text-primary fa-3x"><strong>{{hillsborough.attributes.Counts}}</strong></div>
+              <div class="text-primary fa-3x"><strong>{{hillsborough.attributes.TotalPositive}}</strong></div>
               <strong>Hillsborough Cases</strong>
               <hr>
               Age Range: <strong>{{hillsborough.attributes.Range}}</strong><br>
-              Men: <strong>{{hillsborough.attributes.Male}}</strong> | Women: <strong>{{hillsborough.attributes.Female}}</strong><br>
+              Men: <strong>{{hillsborough.attributes.Men}}</strong> | Women: <strong>{{hillsborough.attributes.Women}}</strong><br>
               <hr>
               <a class="btn btn-primary btn-block" href="https://fdoh.maps.arcgis.com/apps/opsdashboard/index.html#/8d0de33f260d444c852a615dc7837c86">Florida's COVID-19 map</a>
             </div>
@@ -87,11 +87,11 @@
                   </div>
                   <div class="col-xs-6 flex flex-row">
                     <span class="count">
-                      {{ county.attributes.Counts }}
+                      {{ county.attributes.TotalPositive }}
                     </span>
                     <span
                       class="ranking background-primary"
-                      :style="{ width: (county.attributes.Counts / casesSummary.max) * 100 + '%' }"
+                      :style="{ width: (county.attributes.TotalPositive / casesSummary.max) * 100 + '%' }"
                     ></span>
                   </div>
 
@@ -118,19 +118,19 @@
         mounted: function () {
           // get info
           var self = this;
-          jQuery.getJSON( "https://services1.arcgis.com/CY1LXxl9zlJeBuRZ/arcgis/rest/services/Florida_COVID19_Cases/FeatureServer/0/query?f=json&where=Counts%20IS%20NOT%20NULL&returnGeometry=false&spatialRel=esriSpatialRelIntersects&outFields=*&orderByFields=Counts%20desc&outSR=102100&resultOffset=0&resultRecordCount=67&cacheHint=true", function( data ) {
+          jQuery.getJSON( "https://services1.arcgis.com/CY1LXxl9zlJeBuRZ/arcgis/rest/services/Florida_COVID19_Cases/FeatureServer/0/query?f=json&where=Counts%20IS%20NOT%20NULL&returnGeometry=false&spatialRel=esriSpatialRelIntersects&outFields=*&orderByFields=TotalPositive%20desc&outSR=102100&resultOffset=0&resultRecordCount=67&cacheHint=true", function( data ) {
              self.flCounties =  data.features
           });
         },
         computed: {
           hillsborough: function hillsborough() {
-            var matches =  _.filter(this.flCounties, { 'attributes': { COUNTYN: 57 } });
+            var matches =  _.filter(this.flCounties, { 'attributes': { COUNTYNAME: "HILLSBOROUGH" } });
             return matches[0];
           },
           casesSummary: function casesSummary() {
             return {
-              min: this.flCounties[this.flCounties.length - 1].attributes.Counts,
-              max: this.flCounties[0].attributes.Counts,
+              min: this.flCounties[this.flCounties.length - 1].attributes.TotalPositive,
+              max: this.flCounties[0].attributes.TotalPositive,
             };
           }
         },
