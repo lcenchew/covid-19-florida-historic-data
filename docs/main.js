@@ -45,7 +45,7 @@ function getData() {
         xhr2.send();
         xhr2.onload = function () {
           results.push({
-            date: day,
+            date: day.replace("tampa-", ""),
             mmdd: day.substring(10, 12) + '/' + day.slice(-2),
             data: JSON.parse(xhr2.response)
           });
@@ -133,7 +133,7 @@ function getDataState() {
         xhr2.send();
         xhr2.onload = function () {
           results.push({
-            date: day,
+            date: day.replace("state-", ""),
             mmdd: day.substring(10, 12) + '/' + day.slice(-2),
             data: JSON.parse(xhr2.response)
           });
