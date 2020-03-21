@@ -1,0 +1,7 @@
+// cloudinary background images
+@mixin cloudinary-bk($img, $size) {
+  // size is in pixels
+  background-image: url("https://res.cloudinary.com/danigvp6z/image/upload/c_scale,w_#{$size}#{$img}.jpg");
+  background-size: cover;
+  background-position: center;
+}

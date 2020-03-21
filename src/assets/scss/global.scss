@@ -1,0 +1,83 @@
+@import "vars.scss";
+
+html,
+body {
+  font: system_ui, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif 16px/1.8;
+  -webkit-font-smoothing: antialiased;
+}
+
+a {
+  outline: 0;
+  border-bottom: 2px solid rgba($brand-primary, 0.3);
+  box-shadow: inset 0 -2px 0 rgba($brand-primary, 0.3);
+  transition: background 0.15s cubic-bezier(0.33, 0.66, 0.66, 1);
+  color: $black;
+  text-decoration: none;
+  &:hover,
+  &:focus {
+    background: rgba($brand-secondary, 0.15);
+    color: $black;
+  }
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  // font-family: $font1;
+  &:target {
+    box-shadow: inset 0 -5px 0 yellow;
+  }
+}
+
+.content {
+  line-height: 2.2;
+}
+
+.padded {
+  padding: 1.2rem 0;
+}
+
+
+
+.grade{
+  padding: .5rem 1rem;
+  background-color: darkgray;
+  border-radius: 5px;
+  display: inline-block;
+  font-size: 2.5rem !important;
+}
+h3.grade{
+  margin-bottom: 0;
+}
+body{
+  .grade-A{
+    background-color: darkgreen;
+    color: white !important;
+  }
+  .grade-B{
+    background-color: rgb(93, 124, 31);
+    color: white !important;
+  }
+  .grade-C{
+    background-color: rgb(156, 102, 1);
+    color: white !important;
+  }
+  .grade-D{
+    background-color: rgb(148, 39, 0);
+    color: white !important;
+  }
+  .grade-F{
+    background-color: darkred;
+    color: white !important;
+  }
+}
+.info-graphic{
+  line-height: 1;
+}
+
+.column-no-grow{
+  flex-grow: 0;
+}
