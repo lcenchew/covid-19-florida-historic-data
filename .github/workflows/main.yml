@@ -82,7 +82,7 @@ jobs:
           git config user.name "NickStees"
           if [[ `git status --porcelain` ]]; then
             git add .
-            git commit -a -m "add weather data"
+            git commit -a -m "add historic data"
             git remote rm origin
             git remote add origin https://NickStees:$PUSH_TOKEN@github.com/NickStees/covid-19-florida-historic-data.git
             git push origin HEAD:master
