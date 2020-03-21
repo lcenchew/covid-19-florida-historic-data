@@ -1,6 +1,5 @@
 function plotData(results) {
   const labels = results.map(x => x.mmdd);
-  const cases = results.map(x => x.data.features[0].attributes.T_positive);
   const ctx = document.getElementById('myChart').getContext('2d');
   const chart = new Chart(ctx, {
     type: 'line',
@@ -11,8 +10,14 @@ function plotData(results) {
           label: 'Hillsborough Covid-19 Cases',
           backgroundColor: 'rgba(255, 99, 132, 0)',
           borderColor: '#ea0000',
-          data: cases
-        }
+          data: results.map(x => x.data.features[0].attributes.T_positive)
+        },
+        // {
+        //   label: 'Hillsborough Negative',
+        //   backgroundColor: 'rgba(255, 99, 132, 0)',
+        //   borderColor: 'green',
+        //   data: results.map(x => x.data.features[0].attributes.T_negative)
+        // }
       ]
     },
     options: {
@@ -43,10 +48,10 @@ function getData() {
         xhr2.open('GET', `assets/data/${day}.json`);
         xhr2.send();
         xhr2.onload = function () {
-          day = day.replace("tampa-", "");
+          day = day.replace("tampa-", "").trim();
           results.push({
             date: day,
-            mmdd: day.substring(4, 6) + '/' + day.slice(-3),
+            mmdd: day.substring(4, 6) + '/' + day.slice(-2),
             data: JSON.parse(xhr2.response)
           });
         };
@@ -61,8 +66,8 @@ function getData() {
       let todayMonth = ("0"+(today.getMonth() + 1)).slice(-2); //month with leading 0
       let todayDay = (today.getDate());
       results.push({
-        date: `${today.getFullYear()}${todayMonth}${todayDay}`,
-        mmdd: `${todayMonth}/${todayDay}`,
+        date: `${today.getFullYear()}${todayMonth}${todayDay}9`,
+        mmdd: `now`,
         data: JSON.parse(xhr2.response)
       });
     };
@@ -146,10 +151,10 @@ function getDataState() {
         xhr2.open('GET', `assets/data/${day}.json`);
         xhr2.send();
         xhr2.onload = function () {
-          day = day.replace("state-", "");
+          day = day.replace("state-", "").trim();
           results.push({
             date: day,
-            mmdd: day.substring(4, 6) + '/' + day.slice(-3),
+            mmdd: day.substring(4, 6) + '/' + day.slice(-2),
             data: JSON.parse(xhr2.response)
           });
         };
@@ -164,8 +169,8 @@ function getDataState() {
     let todayMonth = ("0"+(today.getMonth() + 1)).slice(-2); //month with leading 0
     let todayDay = (today.getDate());
     results.push({
-      date: `${today.getFullYear()}${todayMonth}${todayDay}`,
-      mmdd: `${todayMonth}/${todayDay}`,
+      date: `${today.getFullYear()}${todayMonth}${todayDay}9`,
+      mmdd: `now`,
       data: JSON.parse(xhr2.response)
     });
   };
