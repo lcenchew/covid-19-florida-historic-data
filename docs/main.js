@@ -43,9 +43,10 @@ function getData() {
         xhr2.open('GET', `assets/data/${day}.json`);
         xhr2.send();
         xhr2.onload = function () {
+          day = day.replace("tampa-", "");
           results.push({
-            date: day.replace("tampa-", ""),
-            mmdd: day.substring(10, 12) + '/' + day.slice(-2),
+            date: day,
+            mmdd: day.substring(4, 6) + '/' + day.slice(-3),
             data: JSON.parse(xhr2.response)
           });
         };
