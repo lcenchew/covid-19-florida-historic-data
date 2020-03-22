@@ -66,17 +66,7 @@
       <div id="app" v-cloak>
         <div v-if="currentCounty.attributes">
           <div class="row">
-            <div class="col-sm-4 text-center" >
-              <div class="text-danger fa-3x"><strong>{{currentCounty.attributes.TPositive}}</strong></div>
-              <strong>{{currentCounty.attributes.County_1}} Cases</strong>
-              <ul class="list-group">
-                <!-- <li class="list-group-item">Deaths:  <strong>{{currentCounty.attributes.FLandNonFLDeaths}}</strong></li> -->
-                <li class="list-group-item">Total Tested:</strong> <strong class="text-success">{{currentCounty.attributes.T_total}}</strong></li>
-                <li class="list-group-item">Tests Pending:</strong> {{currentCounty.attributes.T_pending}}</li>
-                <li class="list-group-item">Tests Negative:</strong> <strong class="text-success">{{currentCounty.attributes.T_negative}}</strong></li>
-              </ul>
-            </div>
-            <div class="col-sm-8" >
+            <div class="col-sm-6" >
               <div class="text-center"><strong>Top Cases by Florida County</strong></div>
               <div class="rank-list">
                 <div class="row item" v-for="county in flCounties" :class="{ active: county.attributes.COUNTYNAME == currentCounty.attributes.COUNTYNAME }" @click="plotData(county.attributes.COUNTYNAME)">
@@ -95,6 +85,16 @@
 
                 </div>
               </div>
+            </div>
+            <div class="col-sm-6 text-center" >
+              <div class="text-danger fa-3x"><strong>{{currentCounty.attributes.TPositive}}</strong></div>
+              <strong>{{currentCounty.attributes.County_1}} Cases</strong>
+              <ul class="list-group">
+                <!-- <li class="list-group-item">Deaths:  <strong>{{currentCounty.attributes.FLandNonFLDeaths}}</strong></li> -->
+                <li class="list-group-item">Total Tested:</strong> <strong class="text-success">{{currentCounty.attributes.T_total}}</strong></li>
+                <li class="list-group-item">Tests Pending:</strong> {{currentCounty.attributes.T_pending}}</li>
+                <li class="list-group-item">Tests Negative:</strong> <strong class="text-success">{{currentCounty.attributes.T_negative}}</strong></li>
+              </ul>
             </div>
           </div>
 
