@@ -64,16 +64,16 @@
   <body>
     <div class="content container">
       <div id="app" v-cloak>
-        <div v-if="hillsborough">
+        <div v-if="currentCounty.attributes">
           <div class="row">
             <div class="col-sm-4 text-center" >
-              <div class="text-primary fa-3x"><strong>{{currentCounty.attributes.TPositive}}</strong></div>
+              <div class="text-danger fa-3x"><strong>{{currentCounty.attributes.TPositive}}</strong></div>
               <strong>{{currentCounty.attributes.County_1}} Cases</strong>
               <ul class="list-group">
                 <!-- <li class="list-group-item">Deaths:  <strong>{{currentCounty.attributes.FLandNonFLDeaths}}</strong></li> -->
-                <li class="list-group-item">Total Tested:</strong> <span class="text-primary">{{currentCounty.attributes.T_total}}</span></li>
+                <li class="list-group-item">Total Tested:</strong> <strong class="text-success">{{currentCounty.attributes.T_total}}</strong></li>
                 <li class="list-group-item">Tests Pending:</strong> {{currentCounty.attributes.T_pending}}</li>
-                <li class="list-group-item">Tests Negative:</strong> {{currentCounty.attributes.T_negative}}</li>
+                <li class="list-group-item">Tests Negative:</strong> <strong class="text-success">{{currentCounty.attributes.T_negative}}</strong></li>
               </ul>
             </div>
             <div class="col-sm-8" >
@@ -105,7 +105,7 @@
         <div class="row">
           <div class="col-md-6">
             <div class="header">
-              <div class="chartjs-title">{{currentCounty.County_1}} Cases</div>
+              <div class="chartjs-title" v-if="currentCounty.attributes">{{currentCounty.attributes.County_1}} Cases</div>
             </div>
             <canvas id="myChart"></canvas>
             <canvas id="myChartTesting"></canvas>
@@ -177,6 +177,10 @@
             })
             // most recent results move to selected county
             self.selectedCounty = thisCountyData[thisCountyData.length - 1];
+            var gradient = ctx.createLinearGradient(0, 0, 0, 450);
+            gradient.addColorStop(0, 'rgba(255, 0,0, 0.5)');
+            gradient.addColorStop(0.5, 'rgba(255, 0, 0, 0.25)');
+            gradient.addColorStop(1, 'rgba(255, 0, 0, 0)');
             const chart = new Chart(ctx, {
               type: 'line',
               data: {
@@ -184,7 +188,7 @@
                 datasets: [
                   {
                     label: county + ' Covid-19 Cases',
-                    backgroundColor: 'rgba(255, 99, 132, 0)',
+                    backgroundColor: gradient,
                     borderColor: '#ea0000',
                     data: results.map(x => {
                       var countyResults = _.filter(x.data.features, { 'attributes': { 'COUNTYNAME': county.toUpperCase() } })

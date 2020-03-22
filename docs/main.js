@@ -3,6 +3,10 @@
 function plotDataState(results) {
   const labels = results.map(x => x.mmdd);
   const ctx = document.getElementById('myChartState').getContext('2d');
+  var gradient = ctx.createLinearGradient(0, 0, 0, 450);
+  gradient.addColorStop(0, 'rgba(255, 0,0, 0.5)');
+  gradient.addColorStop(0.5, 'rgba(255, 0, 0, 0.25)');
+  gradient.addColorStop(1, 'rgba(255, 0, 0, 0)');
   const chart = new Chart(ctx, {
     type: 'line',
     data: {
@@ -10,7 +14,7 @@ function plotDataState(results) {
       datasets: [
         {
           label: 'Positive',
-          backgroundColor: 'rgba(202, 0, 0, 0)',
+          backgroundColor: gradient,
           borderColor: '#ea0000',
           data: results.map(x => x.data.features[0].attributes.Positive)
         },
