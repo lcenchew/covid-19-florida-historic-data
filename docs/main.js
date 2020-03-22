@@ -1,85 +1,3 @@
-function plotData(results) {
-  const labels = results.map(x => x.mmdd);
-  const ctx = document.getElementById('myChart').getContext('2d');
-  const chart = new Chart(ctx, {
-    type: 'line',
-    data: {
-      labels: labels,
-      datasets: [
-        {
-          label: 'Hillsborough Covid-19 Cases',
-          backgroundColor: 'rgba(255, 99, 132, 0)',
-          borderColor: '#ea0000',
-          data: results.map(x => x.data.features[0].attributes.T_positive)
-        },
-        // {
-        //   label: 'Hillsborough Negative',
-        //   backgroundColor: 'rgba(255, 99, 132, 0)',
-        //   borderColor: 'green',
-        //   data: results.map(x => x.data.features[0].attributes.T_negative)
-        // }
-      ]
-    },
-    options: {
-      scales: {
-        yAxes: [{
-            ticks: {
-                suggestedMin: 0,
-                // suggestedMax: 100
-            }
-        }]
-      }
-    }
-  });
-}
-
-function getData() {
-  const xhr = new XMLHttpRequest();
-  xhr.open('GET', 'assets/data.txt');
-  xhr.send();
-  const results = [];
-  xhr.onload = function() {
-    xhr.response
-      .split('\n')
-      .filter(d => d)
-      .splice(-30)
-      .forEach(day => {
-        const xhr2 = new XMLHttpRequest();
-        xhr2.open('GET', `assets/data/${day}.json`);
-        xhr2.send();
-        xhr2.onload = function () {
-          day = day.replace("tampa-", "").trim();
-          results.push({
-            date: day,
-            mmdd: day.substring(4, 6) + '/' + day.slice(-2),
-            data: JSON.parse(xhr2.response)
-          });
-        };
-      });
-  };
-    // get now data
-    const xhr2 = new XMLHttpRequest();
-    xhr2.open('GET', `https://services1.arcgis.com/CY1LXxl9zlJeBuRZ/arcgis/rest/services/Florida_COVID19_Cases/FeatureServer/0/query?f=json&where=T_positive%20IS%20NOT%20NULL&returnGeometry=false&spatialRel=esriSpatialRelIntersects&outFields=*&orderByFields=T_positive%20desc&outSR=102100&resultOffset=0&resultRecordCount=67&cacheHint=true`);
-    xhr2.send();
-    xhr2.onload = function () {
-      let today = new Date();
-      let todayMonth = ("0"+(today.getMonth() + 1)).slice(-2); //month with leading 0
-      let todayDay = (today.getDate());
-      results.push({
-        date: `${today.getFullYear()}${todayMonth}${todayDay}9`,
-        mmdd: `now`,
-        data: JSON.parse(xhr2.response)
-      });
-    };
-    return results;
-}
-
-const savedData = getData();
-setTimeout(() => {
-  plotData(savedData.sort((a, b) => a.date - b.date));
-}, 1000);
-
-
 
 // State Chart
 function plotDataState(results) {
@@ -89,6 +7,38 @@ function plotDataState(results) {
     type: 'line',
     data: {
       labels: labels,
+      datasets: [
+        {
+          label: 'Positive',
+          backgroundColor: 'rgba(202, 0, 0, 0)',
+          borderColor: '#ea0000',
+          data: results.map(x => x.data.features[0].attributes.Positive)
+        },
+        {
+          label: 'Deaths',
+          backgroundColor: '',
+          borderColor: 'black',
+          data: results.map(x => x.data.features[0].attributes.Deaths)
+        }
+      ]
+    },
+    options: {
+      scales: {
+        yAxes: [{
+            ticks: {
+                suggestedMin: 0,
+                precision: 0,
+            }
+        }]
+      }
+    }
+  });
+  const labels2 = results.map(x => x.mmdd);
+  const ctx2 = document.getElementById('myChartStateTesting').getContext('2d');
+  const chart2 = new Chart(ctx2, {
+    type: 'line',
+    data: {
+      labels: labels2,
       datasets: [
         {
           label: 'Pending',
@@ -128,7 +78,7 @@ function plotDataState(results) {
             stacked: true,
             ticks: {
                 suggestedMin: 0,
-                // suggestedMax: 100
+                precision: 0,
             }
         }]
       }
