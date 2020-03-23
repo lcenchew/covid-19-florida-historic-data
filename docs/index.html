@@ -6,8 +6,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta http-equiv="X-UA-Compatible" content="ie=edge" />
     <title>Historical COVID-19 Data</title>
-    <meta name="description" content="COVID-19 Florida historical data tracker">
-    <meta name="keywords" content="COVID-19 Florida, historical">
+    <meta name="description" content="COVID-19 Coronavirus Florida historical data tracker">
+    <meta name="keywords" content="COVID-19 Coronavirus Florida, historical">
     <link rel="icon" type="image/x-icon" href="favicon.ico">
     <link rel="stylesheet" href="https://www.tampagov.net/static/css/styles.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
@@ -73,13 +73,13 @@
 
 <body>
     <div class="content container">
-        <h1 class="text-center">Florida Caronavirus(COVID-19) Tracker</h1>
-        <p>This site captures daily numbers from the Florida Department of Health to track the Caronavirus progress over time.</p>
+        <h1 class="text-center">Florida Coronavirus(COVID-19) Tracker</h1>
+        <p>This site captures daily numbers from the Florida Department of Health to track the Coronavirus progress over time.</p>
         <div id="app" v-cloak>
             <div v-if="currentCounty.attributes">
                 <div class="row">
                     <div class="col-sm-6">
-                        <div class="text-center"><strong>Top Cases by Florida County</strong></div>
+                        <div class="text-center"><strong>Top Coronavirus Cases by Florida County</strong></div>
                         <div class="rank-list">
                             <div class="row item" v-for="county in flCounties" :class="{ active: county.attributes.COUNTYNAME == currentCounty.attributes.COUNTYNAME }" @click="plotData(county.attributes.COUNTYNAME)">
                                 <div class="col-xs-6 text-right">
