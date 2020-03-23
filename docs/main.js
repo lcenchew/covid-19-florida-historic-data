@@ -16,7 +16,7 @@ function plotDataState(results) {
                     borderColor: '#ea0000',
                     data: results.map(x => parseInt(x.data.features[0].attributes.Positive)),
                     trendlineLinear: {
-                        style: "red",
+                        style: "blue",
                         lineStyle: "dotted",
                         width: 2
                     }
