@@ -69,6 +69,15 @@
         .item:hover {
             cursor: pointer;
         }
+        
+        .trend-label::before {
+            content: "....";
+            color: blue;
+            padding-right: 1.5rem;
+            font-size: 2rem;
+            display: inline-block;
+            transform: rotate(-33deg) translate(14px, 1px);
+        }
     </style>
 </head>
 
@@ -82,18 +91,19 @@
                     <div class="col-sm-6">
                         <div class="text-center"><strong>Top Coronavirus Cases by Florida County</strong></div>
                         <div class="rank-list">
-                            <div class="row item" v-for="county in flCounties" :class="{ active: county.attributes.COUNTYNAME == currentCounty.attributes.COUNTYNAME }" @click="plotData(county.attributes.COUNTYNAME)">
+                            <div class="row item" v-if="flCounties && flCounties.length" v-for="county in flCounties" :class="{ active: county.attributes.COUNTYNAME == currentCounty.attributes.COUNTYNAME }" @click="plotData(county.attributes.COUNTYNAME)">
                                 <div class="col-xs-6 text-right">
                                     <span class="countyname">{{ county.attributes.County_1 }}</span>
                                 </div>
                                 <div class="col-xs-6 flex flex-row">
                                     <span class="count">
-                      {{ county.attributes.TPositive  | toLocal }}
-                    </span>
+                                    {{ county.attributes.TPositive  | toLocal }}
+                                    </span>
                                     <span class="ranking background-primary" :style="{ width: (county.attributes.TPositive / casesSummary.max) * 100 + '%' }"></span>
                                 </div>
 
                             </div>
+                            <div v-else>Error loading data from https://fdoh.maps.arcgis.com/apps/opsdashboard/index.html#/8d0de33f260d444c852a615dc7837c86</div>
                         </div>
                     </div>
                     <div class="col-sm-6 text-center">
@@ -118,6 +128,9 @@
                 <div class="col-md-6">
                     <div class="header">
                         <div class="chartjs-title" v-if="currentCounty.attributes">{{currentCounty.attributes.County_1}} Cases</div>
+                        <div class="pull-right">
+                            <small class="trend-label">County Trend</small>
+                        </div>
                     </div>
                     <canvas id="myChart"></canvas>
                     <div class="header">
@@ -128,6 +141,9 @@
                 <div class="col-md-6">
                     <div class="header">
                         <div class="chartjs-title">Florida State Cases</div>
+                        <div class="pull-right">
+                            <small class="trend-label">State Trend</small>
+                        </div>
                     </div>
                     <canvas id="myChartState"></canvas>
                     <div class="header">
