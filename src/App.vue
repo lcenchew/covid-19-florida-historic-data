@@ -2,7 +2,10 @@
   <div class="content container">
     <div id="app">
       <h1 class="text-center">Florida Coronavirus(COVID-19) Tracker</h1>
-      <p>This site captures daily numbers from the Florida Department of Health to track the Coronavirus progress over time.</p>
+      <div>This site captures daily numbers from the <a
+        href="https://fdoh.maps.arcgis.com/apps/opsdashboard/index.html#/8d0de33f260d444c852a615dc7837c86"
+      >Florida Department of Health</a> to track the Coronavirus progress over time.</div>
+      <div class="text-center"><small>data is updated at approximately 11 a.m. and 6 p.m. daily.</small></div>
       <div v-if="currentCounty.attributes">
         <div class="row">
           <div class="col-sm-7">
@@ -115,10 +118,7 @@
       </div>
 
       <hr />
-      <a
-        class="btn btn-primary btn-block"
-        href="https://fdoh.maps.arcgis.com/apps/opsdashboard/index.html#/8d0de33f260d444c852a615dc7837c86"
-      >Florida's COVID-19 map</a>
+
     </div>
   </div>
 </template>
