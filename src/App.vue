@@ -206,11 +206,13 @@ export default {
         data: fetchedNowStateData.data
       });
       let sortedStateData = stateResults.sort((a, b) => a.date - b.date);
-      self.plotDataState(sortedStateData);
       self.alldata = results; //all done fetching data
-      self.plotData("HILLSBOROUGH"); // plot default
       self.flCounties = counties.data.features;
       self.flCountiesLoading = false;
+      setTimeout(function(){
+        self.plotData("HILLSBOROUGH"); // plot default
+        self.plotDataState(sortedStateData);
+      }, 300);
     } catch (err) {
       console.log(err);
     }
