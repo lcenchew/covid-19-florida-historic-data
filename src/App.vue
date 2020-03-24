@@ -37,7 +37,7 @@
                       ></span>
                     </div>
                     <div class="col-xs-2 text-center">
-                      <span class="badge">{{((county.attributes.TPositive / countyInfo[county.attributes.COUNTYNAME].pop) * 100000).toFixed(0)}}</span>
+                      <span class="badge"><i class="fa fa-university small" aria-hidden="true"></i> {{((county.attributes.TPositive / countyInfo[county.attributes.COUNTYNAME].pop) * 100000).toFixed(0)}}</span>
                     </div>
                   </div>
                 </div>
@@ -49,7 +49,7 @@
               <strong>{{currentCounty.attributes.TPositive}}</strong>
             </div>
             <strong>{{currentCounty.attributes.County_1}} Cases</strong><br>
-            Cases per Capita <div class="badge">{{((currentCounty.attributes.TPositive / countyInfo[currentCounty.attributes.COUNTYNAME].pop) * 100000).toFixed(0)}}</div>
+            Cases per Capita <div class="badge"><span class="badge"><i class="fa fa-university small" aria-hidden="true"></i> {{((currentCounty.attributes.TPositive / countyInfo[currentCounty.attributes.COUNTYNAME].pop) * 100000).toFixed(0)}}</span></div>
             <div>
               <strong>{{(currentCounty.attributes.TPositive / currentCounty.attributes.T_total) | toPercent }}</strong>% tested are positive for COVID-19
             </div>
