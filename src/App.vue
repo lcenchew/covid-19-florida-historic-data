@@ -136,18 +136,17 @@ export default {
       selectedCounty: {}
     };
   },
-  mounted: function() {
+  async mounted() {
     // get info
     var self = this;
-    axios
-      .get(
-        "https://services1.arcgis.com/CY1LXxl9zlJeBuRZ/arcgis/rest/services/Florida_COVID19_Cases/FeatureServer/0/query?f=json&where=1%3D1&returnGeometry=false&spatialRel=esriSpatialRelIntersects&outFields=*&orderByFields=TPositive%20desc&outSR=102100&resultOffset=0&resultRecordCount=67&cacheHint=true"
-      )
-      .then(response => {
-        self.flCounties = response.data.features;
-        self.flCountiesLoading = false;
-      });
-    self.getData();
+    try{
+      let counties = await axios.get('https://services1.arcgis.com/CY1LXxl9zlJeBuRZ/arcgis/rest/services/Florida_COVID19_Cases/FeatureServer/0/query?f=json&where=1%3D1&returnGeometry=false&spatialRel=esriSpatialRelIntersects&outFields=*&orderByFields=TPositive%20desc&outSR=102100&resultOffset=0&resultRecordCount=67&cacheHint=true')
+      let allDataSets = await self.getData()
+      self.flCounties = counties.data.features;
+      self.flCountiesLoading = false;
+    }catch(err){
+      console.log(err)
+    }
   },
   filters: {
     toLocal: function(value) {
@@ -325,7 +324,6 @@ export default {
       });
     },
     plotDataState: function plotDataState(results) {
-      debugger
       const labels = results.map(x => x.mmdd);
       const ctx = document.getElementById("myChartState").getContext("2d");
       var gradient = ctx.createLinearGradient(0, 0, 0, 450);
