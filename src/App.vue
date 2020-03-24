@@ -139,13 +139,80 @@ export default {
   async mounted() {
     // get info
     var self = this;
-    try{
-      let counties = await axios.get('https://services1.arcgis.com/CY1LXxl9zlJeBuRZ/arcgis/rest/services/Florida_COVID19_Cases/FeatureServer/0/query?f=json&where=1%3D1&returnGeometry=false&spatialRel=esriSpatialRelIntersects&outFields=*&orderByFields=TPositive%20desc&outSR=102100&resultOffset=0&resultRecordCount=67&cacheHint=true')
-      let allDataSets = await self.getData()
+    try {
+      var results = [];
+      var stateResults = [];
+      let today = new Date();
+      let todayMonth = ("0" + (today.getMonth() + 1)).slice(-2); //month with leading 0
+      let todayDay = today.getDate();
+      // start requests
+      let counties = await axios.get(
+        "https://services1.arcgis.com/CY1LXxl9zlJeBuRZ/arcgis/rest/services/Florida_COVID19_Cases/FeatureServer/0/query?f=json&where=1%3D1&returnGeometry=false&spatialRel=esriSpatialRelIntersects&outFields=*&orderByFields=TPositive%20desc&outSR=102100&resultOffset=0&resultRecordCount=67&cacheHint=true"
+      );
+      let fetchedData = await axios.get("/assets/data.txt");
+      fetchedData.data
+        .split("\n")
+        .filter(d => d)
+        .splice(-30)
+        .forEach(async day => {
+          try {
+          let response = await axios.get(`/assets/data/${day}.json`);
+          day = day.replace("tampa-", "").trim();
+          results.push({
+            date: day,
+            mmdd: day.substring(4, 6) + "/" + day.slice(-2),
+            data: response.data
+          });
+          } catch (err) {
+            console.log(err);
+          }
+        });
+      // get now data
+      let nowData = await axios.get(
+        "https://services1.arcgis.com/CY1LXxl9zlJeBuRZ/arcgis/rest/services/Florida_COVID19_Cases/FeatureServer/0/query?f=json&where=T_positive%20IS%20NOT%20NULL&returnGeometry=false&spatialRel=esriSpatialRelIntersects&outFields=*&orderByFields=T_positive%20desc&outSR=102100&resultOffset=0&resultRecordCount=67&cacheHint=true"
+      );
+      results.push({
+        date: `${today.getFullYear()}${todayMonth}${todayDay}9`,
+        mmdd: `now`,
+        data: nowData.data
+      });
+
+      // State data
+      let fetchedStateData = await axios.get("assets/state-data.txt");
+      fetchedStateData.data
+        .split("\n")
+        .filter(d => d)
+        .splice(-30)
+        .forEach(async day => {
+          try {
+          let response = await axios.get(`/assets/data/${day}.json`);
+          day = day.replace("state-", "").trim();
+          stateResults.push({
+            date: day,
+            mmdd: day.substring(4, 6) + "/" + day.slice(-2),
+            data: response.data
+          });
+          } catch (err) {
+            console.log(err);
+          }
+        });
+      // Now state data
+      let fetchedNowStateData = await axios.get(
+        "https://services1.arcgis.com/CY1LXxl9zlJeBuRZ/arcgis/rest/services/Florida_COVID19_Cases/FeatureServer/0/query?f=json&where=1%3D1&returnGeometry=false&spatialRel=esriSpatialRelIntersects&outFields=*&outStatistics=%5B%7B%22statisticType%22%3A%22sum%22%2C%22onStatisticField%22%3A%22FLandNonFLDeaths%22%2C%22outStatisticFieldName%22%3A%22Deaths%22%7D%2C%7B%22statisticType%22%3A%22sum%22%2C%22onStatisticField%22%3A%22T_positive%22%2C%22outStatisticFieldName%22%3A%22Positive%22%7D%2C%7B%22statisticType%22%3A%22sum%22%2C%22onStatisticField%22%3A%22C_Hosp_Yes%22%2C%22outStatisticFieldName%22%3A%22Hospitalized%22%7D%2C%7B%22statisticType%22%3A%22sum%22%2C%22onStatisticField%22%3A%22T_total%22%2C%22outStatisticFieldName%22%3A%22TotalTests%22%7D%2C%7B%22statisticType%22%3A%22sum%22%2C%22onStatisticField%22%3A%22T_negative%22%2C%22outStatisticFieldName%22%3A%22Negative%22%7D%2C%7B%22statisticType%22%3A%22sum%22%2C%22onStatisticField%22%3A%22T_pending%22%2C%22outStatisticFieldName%22%3A%22Pending%22%7D%5D&outSR=102100&cacheHint=true"
+      );
+      stateResults.push({
+        date: `${today.getFullYear()}${todayMonth}${todayDay}9`,
+        mmdd: `now`,
+        data: fetchedNowStateData.data
+      });
+      let sortedStateData = stateResults.sort((a, b) => a.date - b.date);
+      self.plotDataState(sortedStateData);
+      self.alldata = results; //all done fetching data
+      self.plotData("HILLSBOROUGH"); // plot default
       self.flCounties = counties.data.features;
       self.flCountiesLoading = false;
-    }catch(err){
-      console.log(err)
+    } catch (err) {
+      console.log(err);
     }
   },
   filters: {
@@ -176,8 +243,15 @@ export default {
     }
   },
   methods: {
-    track () {
-      this.$ga.page('/')
+    track() {
+      this.$ga.page("/");
+    },
+    getData: async function getData() {
+      var self = this;
+      try {
+      } catch (err) {
+        console.log(err);
+      }
     },
     plotData: function plotData(county) {
       var self = this;
@@ -423,74 +497,6 @@ export default {
             ]
           }
         }
-      });
-    },
-    getData: function getData() {
-      var self = this;
-      axios.get("/assets/data.txt").then(response => {
-        var results = [];
-        response.data
-          .split("\n")
-          .filter(d => d)
-          .splice(-30)
-          .forEach(day => {
-            axios.get(`/assets/data/${day}.json`).then(response => {
-              day = day.replace("tampa-", "").trim();
-              results.push({
-                date: day,
-                mmdd: day.substring(4, 6) + "/" + day.slice(-2),
-                data: response.data
-              });
-            });
-          });
-        // get now data
-        axios
-          .get(
-            "https://services1.arcgis.com/CY1LXxl9zlJeBuRZ/arcgis/rest/services/Florida_COVID19_Cases/FeatureServer/0/query?f=json&where=T_positive%20IS%20NOT%20NULL&returnGeometry=false&spatialRel=esriSpatialRelIntersects&outFields=*&orderByFields=T_positive%20desc&outSR=102100&resultOffset=0&resultRecordCount=67&cacheHint=true"
-          )
-          .then(response => {
-            let today = new Date();
-            let todayMonth = ("0" + (today.getMonth() + 1)).slice(-2); //month with leading 0
-            let todayDay = today.getDate();
-            results.push({
-              date: `${today.getFullYear()}${todayMonth}${todayDay}9`,
-              mmdd: `now`,
-              data: response.data
-            });
-            self.alldata = results; //all done fetching data
-            self.plotData("HILLSBOROUGH"); // plot default
-
-            // get state data Now
-            const stateResults = [];
-            axios.get(`assets/state-data.txt`).then(response => {
-              response.data
-                .split("\n")
-                .filter(d => d)
-                .splice(-30)
-                .forEach(day => {
-                  axios.get(`/assets/data/${day}.json`).then(response => {
-                    day = day.replace("state-", "").trim();
-                    stateResults.push({
-                      date: day,
-                      mmdd: day.substring(4, 6) + "/" + day.slice(-2),
-                      data: response.data
-                    });
-                  });
-                });
-                // get now state data
-                axios.get(`https://services1.arcgis.com/CY1LXxl9zlJeBuRZ/arcgis/rest/services/Florida_COVID19_Cases/FeatureServer/0/query?f=json&where=1%3D1&returnGeometry=false&spatialRel=esriSpatialRelIntersects&outFields=*&outStatistics=%5B%7B%22statisticType%22%3A%22sum%22%2C%22onStatisticField%22%3A%22FLandNonFLDeaths%22%2C%22outStatisticFieldName%22%3A%22Deaths%22%7D%2C%7B%22statisticType%22%3A%22sum%22%2C%22onStatisticField%22%3A%22T_positive%22%2C%22outStatisticFieldName%22%3A%22Positive%22%7D%2C%7B%22statisticType%22%3A%22sum%22%2C%22onStatisticField%22%3A%22C_Hosp_Yes%22%2C%22outStatisticFieldName%22%3A%22Hospitalized%22%7D%2C%7B%22statisticType%22%3A%22sum%22%2C%22onStatisticField%22%3A%22T_total%22%2C%22outStatisticFieldName%22%3A%22TotalTests%22%7D%2C%7B%22statisticType%22%3A%22sum%22%2C%22onStatisticField%22%3A%22T_negative%22%2C%22outStatisticFieldName%22%3A%22Negative%22%7D%2C%7B%22statisticType%22%3A%22sum%22%2C%22onStatisticField%22%3A%22T_pending%22%2C%22outStatisticFieldName%22%3A%22Pending%22%7D%5D&outSR=102100&cacheHint=true`).then(response => {
-                  let today = new Date();
-                  let todayMonth = ("0" + (today.getMonth() + 1)).slice(-2); //month with leading 0
-                  let todayDay = (today.getDate());
-                  stateResults.push({
-                      date: `${today.getFullYear()}${todayMonth}${todayDay}9`,
-                      mmdd: `now`,
-                      data: response.data
-                  });
-                  self.plotDataState(stateResults.sort((a, b) => a.date - b.date));
-                });
-            });
-          });
       });
     }
   }
