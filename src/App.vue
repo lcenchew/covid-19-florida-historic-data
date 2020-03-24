@@ -325,6 +325,7 @@ export default {
       });
     },
     plotDataState: function plotDataState(results) {
+      debugger
       const labels = results.map(x => x.mmdd);
       const ctx = document.getElementById("myChartState").getContext("2d");
       var gradient = ctx.createLinearGradient(0, 0, 0, 450);
