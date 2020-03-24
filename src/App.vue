@@ -5,7 +5,7 @@
       <p>This site captures daily numbers from the Florida Department of Health to track the Coronavirus progress over time.</p>
       <div v-if="currentCounty.attributes">
         <div class="row">
-          <div class="col-sm-6">
+          <div class="col-sm-7">
             <div class="text-center">
               <strong>Top Coronavirus Cases by Florida County</strong>
             </div>
@@ -23,26 +23,30 @@
                     @click="plotData(county.attributes.COUNTYNAME)"
                     :key="county.attributes.COUNTYNAME"
                   >
-                    <div class="col-xs-6 text-right">
+                    <div class="col-xs-5 text-right">
                       <span class="countyname">{{ county.attributes.County_1 }}</span>
                     </div>
-                    <div class="col-xs-6 flex flex-row">
+                    <div class="col-xs-5 flex flex-row">
                       <span class="count">{{ county.attributes.TPositive | toLocal }}</span>
                       <span
                         class="ranking background-primary"
                         :style="{ width: (county.attributes.TPositive / casesSummary.max) * 100 + '%' }"
                       ></span>
                     </div>
+                    <div class="col-xs-2 text-center">
+                      <span class="badge">{{((county.attributes.TPositive / countyInfo[county.attributes.COUNTYNAME].pop) * 100000).toFixed(0)}}</span>
+                    </div>
                   </div>
                 </div>
               </div>
             </div>
           </div>
-          <div class="col-sm-6 text-center">
+          <div class="col-sm-5 text-center">
             <div class="text-danger fa-3x">
               <strong>{{currentCounty.attributes.TPositive}}</strong>
             </div>
-            <strong>{{currentCounty.attributes.County_1}} Cases</strong>
+            <strong>{{currentCounty.attributes.County_1}} Cases</strong><br>
+            Cases per Capita <div class="badge">{{((currentCounty.attributes.TPositive / countyInfo[currentCounty.attributes.COUNTYNAME].pop) * 100000).toFixed(0)}}</div>
             <div>
               <strong>{{(currentCounty.attributes.TPositive / currentCounty.attributes.T_total) | toPercent }}</strong>% tested are positive for COVID-19
             </div>
@@ -133,7 +137,8 @@ export default {
       flCounties: [],
       flCountiesLoading: true,
       alldata: [],
-      selectedCounty: {}
+      selectedCounty: {},
+      countyInfo: null,
     };
   },
   async mounted() {
@@ -201,17 +206,18 @@ export default {
         "https://services1.arcgis.com/CY1LXxl9zlJeBuRZ/arcgis/rest/services/Florida_COVID19_Cases/FeatureServer/0/query?f=json&where=1%3D1&returnGeometry=false&spatialRel=esriSpatialRelIntersects&outFields=*&outStatistics=%5B%7B%22statisticType%22%3A%22sum%22%2C%22onStatisticField%22%3A%22FLandNonFLDeaths%22%2C%22outStatisticFieldName%22%3A%22Deaths%22%7D%2C%7B%22statisticType%22%3A%22sum%22%2C%22onStatisticField%22%3A%22T_positive%22%2C%22outStatisticFieldName%22%3A%22Positive%22%7D%2C%7B%22statisticType%22%3A%22sum%22%2C%22onStatisticField%22%3A%22C_Hosp_Yes%22%2C%22outStatisticFieldName%22%3A%22Hospitalized%22%7D%2C%7B%22statisticType%22%3A%22sum%22%2C%22onStatisticField%22%3A%22T_total%22%2C%22outStatisticFieldName%22%3A%22TotalTests%22%7D%2C%7B%22statisticType%22%3A%22sum%22%2C%22onStatisticField%22%3A%22T_negative%22%2C%22outStatisticFieldName%22%3A%22Negative%22%7D%2C%7B%22statisticType%22%3A%22sum%22%2C%22onStatisticField%22%3A%22T_pending%22%2C%22outStatisticFieldName%22%3A%22Pending%22%7D%5D&outSR=102100&cacheHint=true"
       );
       stateResults.push({
-        date: `${today.getFullYear()}${todayMonth}${todayDay}9`,
+        date: `9${today.getFullYear()}${todayMonth}${todayDay}`,
         mmdd: `now`,
         data: fetchedNowStateData.data
       });
-      let sortedStateData = stateResults.sort((a, b) => a.date - b.date);
+      let countyInfo = await axios.get('/assets/data/county-info.json');
+      self.countyInfo = countyInfo.data;
       self.alldata = results; //all done fetching data
       self.flCounties = counties.data.features;
       self.flCountiesLoading = false;
       setTimeout(function(){
         self.plotData("HILLSBOROUGH"); // plot default
-        self.plotDataState(sortedStateData);
+        self.plotDataState(stateResults);
       }, 300);
     } catch (err) {
       console.log(err);
@@ -266,7 +272,7 @@ export default {
             COUNTYNAME: county.toUpperCase()
           }
         });
-        return countyResults[0];
+        return countyResults ? countyResults[0] : null;
       });
       // most recent results move to selected county
       self.selectedCounty = thisCountyData[thisCountyData.length - 1];
@@ -289,9 +295,13 @@ export default {
                     COUNTYNAME: county.toUpperCase()
                   }
                 });
-                return countyResults[0].attributes.T_positive
-                  ? parseInt(countyResults[0].attributes.T_positive)
-                  : 0;
+                if(countyResults.length && countyResults[0].attributes){
+                  return countyResults[0].attributes.T_positive
+                    ? parseInt(countyResults[0].attributes.T_positive)
+                    : 0;
+                }else{
+                  return 0
+                }
               }),
               trendlineLinear: {
                 style: "blue",
@@ -309,9 +319,13 @@ export default {
                     COUNTYNAME: county.toUpperCase()
                   }
                 });
-                return countyResults[0].attributes.FLandNonFLDeaths
-                  ? countyResults[0].attributes.FLandNonFLDeaths
-                  : 0;
+                if(countyResults.length && countyResults[0].attributes){
+                  return countyResults[0].attributes.FLandNonFLDeaths
+                    ? parseInt(countyResults[0].attributes.FLandNonFLDeaths)
+                    : 0;
+                }else{
+                  return 0
+                }
               })
             }
           ]
@@ -347,9 +361,13 @@ export default {
                     COUNTYNAME: county.toUpperCase()
                   }
                 });
-                return countyResults[0].attributes.T_pending
+                if(countyResults.length && countyResults[0].attributes){
+                  return countyResults[0].attributes.T_pending
                   ? countyResults[0].attributes.T_pending
                   : 0;
+                }else{
+                  return 0
+                }
               })
             },
             {
@@ -362,9 +380,13 @@ export default {
                     COUNTYNAME: county.toUpperCase()
                   }
                 });
+                if(countyResults.length && countyResults[0].attributes){
                 return countyResults[0].attributes.T_positive
                   ? countyResults[0].attributes.T_positive
                   : 0;
+                }else{
+                  return 0
+                }
               })
             },
             {
@@ -377,9 +399,13 @@ export default {
                     COUNTYNAME: county.toUpperCase()
                   }
                 });
+                if(countyResults.length && countyResults[0].attributes){
                 return countyResults[0].attributes.T_negative
                   ? countyResults[0].attributes.T_negative
                   : 0;
+                }else{
+                  return 0
+                }
               })
             }
           ]
@@ -400,7 +426,8 @@ export default {
       });
     },
     plotDataState: function plotDataState(results) {
-      const labels = results.map(x => x.mmdd);
+      const resultsSorted = results.sort((a, b) => a.date - b.date)
+      const labels = resultsSorted.map(x => x.mmdd);
       const ctx = document.getElementById("myChartState").getContext("2d");
       var gradient = ctx.createLinearGradient(0, 0, 0, 450);
       gradient.addColorStop(0, "rgba(255, 0,0, 0.5)");
@@ -415,7 +442,7 @@ export default {
               label: "Positive",
               backgroundColor: gradient,
               borderColor: "#ea0000",
-              data: results.map(x =>
+              data: resultsSorted.map(x =>
                 parseInt(x.data.features[0].attributes.Positive)
               ),
               trendlineLinear: {
@@ -428,7 +455,7 @@ export default {
               label: "Deaths",
               backgroundColor: "",
               borderColor: "black",
-              data: results.map(x => x.data.features[0].attributes.Deaths)
+              data: resultsSorted.map(x => x.data.features[0].attributes.Deaths)
             }
           ]
         },
@@ -445,7 +472,7 @@ export default {
           }
         }
       });
-      const labels2 = results.map(x => x.mmdd);
+      const labels2 = resultsSorted.map(x => x.mmdd);
       const ctx2 = document
         .getElementById("myChartStateTesting")
         .getContext("2d");
@@ -458,31 +485,31 @@ export default {
               label: "Pending",
               backgroundColor: "rgba(255, 197, 67, 1)",
               borderColor: "rgba(202, 0, 0, 0)",
-              data: results.map(x => x.data.features[0].attributes.Pending)
+              data: resultsSorted.map(x => x.data.features[0].attributes.Pending)
             },
             {
               label: "Negative",
               backgroundColor: "green",
               borderColor: "rgba(202, 0, 0, 0)",
-              data: results.map(x => x.data.features[0].attributes.Negative)
+              data: resultsSorted.map(x => x.data.features[0].attributes.Negative)
             },
             {
               label: "Positive",
               backgroundColor: "#ea0000",
               borderColor: "rgba(202, 0, 0, 0)",
-              data: results.map(x => x.data.features[0].attributes.Positive)
+              data: resultsSorted.map(x => x.data.features[0].attributes.Positive)
             },
             {
               label: "Hospitalized",
               backgroundColor: "yellow",
               borderColor: "rgba(202, 0, 0, 0)",
-              data: results.map(x => x.data.features[0].attributes.Hospitalized)
+              data: resultsSorted.map(x => x.data.features[0].attributes.Hospitalized)
             },
             {
               label: "Deaths",
               backgroundColor: "black",
               borderColor: "rgba(202, 0, 0, 0)",
-              data: results.map(x => x.data.features[0].attributes.Deaths)
+              data: resultsSorted.map(x => x.data.features[0].attributes.Deaths)
             }
           ]
         },
