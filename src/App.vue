@@ -51,7 +51,7 @@
               <strong>{{(currentCounty.attributes.TPositive / currentCounty.attributes.T_total) | toPercent }}</strong>% tested are positive for COVID-19
             </div>
             <div>
-              <strong>{{(currentCounty.attributes.FLandNonFLDeaths / currentCounty.attributes.T_total) | toPercent }}</strong>% have died
+              <strong>{{currentCounty.attributes.FLandNonFLDeaths | toLocal }}</strong> have died
             </div>
             <ul class="list-group">
               <!-- <li class="list-group-item">Deaths:  <strong>{{currentCounty.attributes.FLandNonFLDeaths}}</strong></li> -->
