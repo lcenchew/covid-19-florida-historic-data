@@ -78,7 +78,7 @@
                       </div>
                     </div>
                     <div class="col-sm-8">
-                      <strong>tested are positive for COVID-19</strong>
+                      <strong>Tested are positive <br> for COVID-19</strong>
                     </div>
                   </div>
                 </li>
@@ -153,31 +153,25 @@
               class="chartjs-title"
               v-if="currentCounty.attributes"
             >{{currentCounty.attributes.County_1}} Cases</div>
-            <div class="pull-right">
-              <small class="trend-label">County Trend</small>
-            </div>
           </div>
-          <canvas id="myChart"></canvas>
+          <line-chart chart-id="county-chart" :chart-data="lineData" :options="lineOptions" :height="250"></line-chart>
           <div class="header">
             <div
               class="chartjs-title"
               v-if="currentCounty.attributes"
             >{{currentCounty.attributes.County_1}} Testing</div>
           </div>
-          <canvas id="myChartTesting"></canvas>
+          <line-chart chart-id="county-testing-chart" :chart-data="lineTestingData" :options="lineTestingOptions" :height="250"></line-chart>
         </div>
         <div class="col-md-6">
           <div class="header">
             <div class="chartjs-title">Florida State Cases</div>
-            <div class="pull-right">
-              <small class="trend-label">State Trend</small>
-            </div>
           </div>
-          <canvas id="myChartState"></canvas>
+          <line-chart chart-id="state-chart" :chart-data="stateLineData" :options="stateLineOptions" :height="250"></line-chart>
           <div class="header">
             <div class="chartjs-title">Florida State Testing</div>
           </div>
-          <canvas id="myChartStateTesting"></canvas>
+          <line-chart chart-id="state-testing-chart" :chart-data="stateLineTestingData" :options="stateLineTestingOptions" :height="250"></line-chart>
         </div>
       </div>
 
@@ -194,10 +188,11 @@
 import _filter from "../node_modules/lodash/filter";
 import countTo from 'vue-count-to';
 import axios from "axios";
+import LineChart from "./components/LineChart.js";
 
 export default {
   name: "App",
-  components: { countTo },
+  components: { countTo, LineChart },
   data: function() {
     return {
       flCounties: [],
@@ -205,6 +200,60 @@ export default {
       alldata: [],
       selectedCounty: {},
       countyInfo: null,
+      lineOptions: {
+          scales: {
+            yAxes: [
+              {
+                ticks: {
+                  suggestedMin: 0,
+                  precision: 0
+                }
+              }
+            ]
+          }
+        },
+      lineData: {},
+      lineTestingOptions: {
+          scales: {
+            yAxes: [
+              {
+                stacked: true,
+                ticks: {
+                  suggestedMin: 0,
+                  precision: 0
+                }
+              }
+            ]
+          }
+        },
+      lineTestingData: {},
+      stateLineOptions:{
+          scales: {
+            yAxes: [
+              {
+                ticks: {
+                  suggestedMin: 0,
+                  precision: 0
+                }
+              }
+            ]
+          }
+        },
+      stateLineData:{},
+      stateLineTestingOptions:{
+          scales: {
+            yAxes: [
+              {
+                stacked: true,
+                ticks: {
+                  suggestedMin: 0,
+                  precision: 0
+                }
+              }
+            ]
+          }
+        },
+      stateLineTestingData:{},
     };
   },
   async mounted() {
@@ -331,7 +380,6 @@ export default {
       var self = this;
       const results = self.alldata.sort((a, b) => a.date - b.date);
       const labels = results.map(x => x.mmdd);
-      const ctx = document.getElementById("myChart").getContext("2d");
       const thisCountyData = results.map(x => {
         var countyResults = _filter(x.data.features, {
           attributes: {
@@ -342,13 +390,11 @@ export default {
       });
       // most recent results move to selected county
       self.selectedCounty = thisCountyData[thisCountyData.length - 1];
-      var gradient = ctx.createLinearGradient(0, 0, 0, 450);
+      var gradient = document.getElementById("county-chart").getContext("2d").createLinearGradient(0, 0, 0, 450);
       gradient.addColorStop(0, "rgba(255, 0,0, 0.5)");
       gradient.addColorStop(0.5, "rgba(255, 0, 0, 0.25)");
       gradient.addColorStop(1, "rgba(255, 0, 0, 0)");
-      const chart = new Chart(ctx, {
-        type: "line",
-        data: {
+      self.lineData = {
           labels: labels,
           datasets: [
             {
@@ -368,12 +414,7 @@ export default {
                 }else{
                   return 0
                 }
-              }),
-              trendlineLinear: {
-                style: "blue",
-                lineStyle: "dotted",
-                width: 2
-              }
+              })
             },
             {
               label: "Deaths",
@@ -395,26 +436,10 @@ export default {
               })
             }
           ]
-        },
-        options: {
-          scales: {
-            yAxes: [
-              {
-                ticks: {
-                  suggestedMin: 0,
-                  precision: 0
-                }
-              }
-            ]
-          }
         }
-      });
       // bottom testing chart
       const labels2 = results.map(x => x.mmdd);
-      const ctx2 = document.getElementById("myChartTesting").getContext("2d");
-      const chart2 = new Chart(ctx2, {
-        type: "line",
-        data: {
+      self.lineTestingData = {
           labels: labels2,
           datasets: [
             {
@@ -475,33 +500,16 @@ export default {
               })
             }
           ]
-        },
-        options: {
-          scales: {
-            yAxes: [
-              {
-                stacked: true,
-                ticks: {
-                  suggestedMin: 0,
-                  precision: 0
-                }
-              }
-            ]
-          }
         }
-      });
     },
     plotDataState: function plotDataState(results) {
       const resultsSorted = results.sort((a, b) => a.date - b.date)
       const labels = resultsSorted.map(x => x.mmdd);
-      const ctx = document.getElementById("myChartState").getContext("2d");
-      var gradient = ctx.createLinearGradient(0, 0, 0, 450);
+      let gradient = document.getElementById("state-chart").getContext("2d").createLinearGradient(0, 0, 0, 450);
       gradient.addColorStop(0, "rgba(255, 0,0, 0.5)");
       gradient.addColorStop(0.5, "rgba(255, 0, 0, 0.25)");
       gradient.addColorStop(1, "rgba(255, 0, 0, 0)");
-      const chart = new Chart(ctx, {
-        type: "line",
-        data: {
+      this.stateLineData =  {
           labels: labels,
           datasets: [
             {
@@ -511,11 +519,6 @@ export default {
               data: resultsSorted.map(x =>
                 parseInt(x.data.features[0].attributes.Positive)
               ),
-              trendlineLinear: {
-                style: "blue",
-                lineStyle: "dotted",
-                width: 2
-              }
             },
             {
               label: "Deaths",
@@ -524,27 +527,10 @@ export default {
               data: resultsSorted.map(x => x.data.features[0].attributes.Deaths)
             }
           ]
-        },
-        options: {
-          scales: {
-            yAxes: [
-              {
-                ticks: {
-                  suggestedMin: 0,
-                  precision: 0
-                }
-              }
-            ]
-          }
         }
-      });
       const labels2 = resultsSorted.map(x => x.mmdd);
-      const ctx2 = document
-        .getElementById("myChartStateTesting")
-        .getContext("2d");
-      const chart2 = new Chart(ctx2, {
-        type: "line",
-        data: {
+
+      this.stateLineTestingData = {
           labels: labels2,
           datasets: [
             {
@@ -578,21 +564,7 @@ export default {
               data: resultsSorted.map(x => x.data.features[0].attributes.Deaths)
             }
           ]
-        },
-        options: {
-          scales: {
-            yAxes: [
-              {
-                stacked: true,
-                ticks: {
-                  suggestedMin: 0,
-                  precision: 0
-                }
-              }
-            ]
-          }
         }
-      });
     }
   }
 };
@@ -643,7 +615,7 @@ export default {
   cursor: pointer;
 }
 
-.trend-label::before {
+/* .trend-label::before {
   content: "....";
   color: blue;
   padding-right: 1.5rem;
@@ -654,7 +626,7 @@ export default {
 
 .trend-label {
   font-size: 12px;
-}
+} */
 .list-group .row{
   line-height: 1.45;
   display: flex;
