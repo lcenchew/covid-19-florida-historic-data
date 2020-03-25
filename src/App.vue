@@ -44,38 +44,102 @@
               </div>
             </div>
           </div>
-          <div class="col-sm-5 text-center">
-            <div class="text-danger fa-3x">
-              <strong>{{currentCounty.attributes.TPositive}}</strong>
+          <div class="col-sm-5">
+            <div class="border-primary">
+              <div class="background-primary  text-center"><strong>{{currentCounty.attributes.County_1}} Cases</strong></div>
+              <ul class="list-group">
+                <li class="list-group-item">
+                  <div class="row">
+                    <div class="col-sm-4">
+                      <div class="text-danger fa-3x text-right-desktop" style="line-height:1;">
+                        <strong><countTo :endVal='currentCounty.attributes.TPositive' :duration='1200'></countTo></strong>
+                      </div>
+                    </div>
+                    <div class="col-sm-8">
+                      <strong>{{currentCounty.attributes.County_1}}<br> Positive Cases</strong>
+                    </div>
+                  </div>
+                </li>
+                <li class="list-group-item">
+                  <div class="row">
+                    <div class="col-sm-4 text-right-desktop">
+                      <div class="badge fa-2x"><i class="fa fa-university small" aria-hidden="true"></i> {{((currentCounty.attributes.TPositive / countyInfo[currentCounty.attributes.COUNTYNAME].pop) * 100000).toFixed(0)}}</div>
+                    </div>
+                    <div class="col-sm-8">
+                      <strong>Cases per Capita</strong><br><small>{{((currentCounty.attributes.TPositive / countyInfo[currentCounty.attributes.COUNTYNAME].pop) * 100000).toFixed(0)}} out of 100k people</small>
+                    </div>
+                  </div>
+                </li>
+                <li class="list-group-item">
+                  <div class="row">
+                    <div class="col-sm-4 text-right-desktop">
+                      <div class="fa-2x">
+                        {{(currentCounty.attributes.TPositive / currentCounty.attributes.T_total) | toPercent }}<sup>%</sup>
+                      </div>
+                    </div>
+                    <div class="col-sm-8">
+                      <strong>tested are positive for COVID-19</strong>
+                    </div>
+                  </div>
+                </li>
+                <li class="list-group-item">
+                  <div class="row">
+                    <div class="col-sm-4 text-right-desktop">
+                      <div class="fa-2x">
+                        {{currentCounty.attributes.FLandNonFLDeaths | toLocal }}
+                      </div>
+                    </div>
+                    <div class="col-sm-8">
+                      <div class="d-flex" style="align-items:center;">
+                        <strong>Deaths</strong>
+                      </div>
+                    </div>
+                  </div>
+                </li>
+                <li class="list-group-item">
+                  <div class="row">
+                    <div class="col-sm-4 text-right-desktop">
+                      <div class="text-success">
+                        <strong><countTo :endVal='currentCounty.attributes.T_total' :duration='1200'></countTo></strong>
+                      </div>
+                    </div>
+                    <div class="col-sm-8">
+                      <div class="d-flex" style="align-items:center;">
+                        <strong>Total Tested</strong>
+                      </div>
+                    </div>
+                  </div>
+                </li>
+                <li class="list-group-item">
+                  <div class="row">
+                    <div class="col-sm-4 text-right-desktop">
+                      <div class="">
+                        <strong><countTo :endVal='currentCounty.attributes.T_pending' :duration='1200'></countTo></strong>
+                      </div>
+                    </div>
+                    <div class="col-sm-8">
+                      <div class="d-flex" style="align-items:center;">
+                        <strong>Tests Pending</strong>
+                      </div>
+                    </div>
+                  </div>
+                </li>
+                <li class="list-group-item">
+                  <div class="row">
+                    <div class="col-sm-4 text-right-desktop">
+                      <div class="text-success">
+                        <strong><countTo :endVal='currentCounty.attributes.T_negative' :duration='1200'></countTo></strong>
+                      </div>
+                    </div>
+                    <div class="col-sm-8">
+                      <div class="d-flex" style="align-items:center;">
+                        <strong>Tests Negative</strong>
+                      </div>
+                    </div>
+                  </div>
+                </li>
+              </ul>
             </div>
-            <strong>{{currentCounty.attributes.County_1}} Cases</strong><br>
-            Cases per Capita <div class="badge"><span class="badge"><i class="fa fa-university small" aria-hidden="true"></i> {{((currentCounty.attributes.TPositive / countyInfo[currentCounty.attributes.COUNTYNAME].pop) * 100000).toFixed(0)}}</span></div>
-            <div>
-              <strong>{{(currentCounty.attributes.TPositive / currentCounty.attributes.T_total) | toPercent }}</strong>% tested are positive for COVID-19
-            </div>
-            <div>
-              <strong>{{currentCounty.attributes.FLandNonFLDeaths | toLocal }}</strong> have died
-            </div>
-            <ul class="list-group">
-              <!-- <li class="list-group-item">Deaths:  <strong>{{currentCounty.attributes.FLandNonFLDeaths}}</strong></li> -->
-              <li class="list-group-item">
-                Total Tested:
-                <strong
-                  class="text-success"
-                >{{currentCounty.attributes.T_total | toLocal}}</strong>
-              </li>
-              <li
-                class="list-group-item"
-              >Tests Pending: {{currentCounty.attributes.T_pending | toLocal}}</li>
-              <li class="list-group-item">
-                Tests Negative:
-                <strong
-                  class="text-success"
-                >{{currentCounty.attributes.T_negative | toLocal}}</strong>
-                <br />
-                <small>{{(currentCounty.attributes.T_negative / currentCounty.attributes.T_total) | toPercent }}% of people tested do not have COVID-19</small>
-              </li>
-            </ul>
           </div>
         </div>
       </div>
@@ -128,10 +192,12 @@
 // import _find from '../node_modules/lodash/find'
 // import _sortBy from '../node_modules/lodash/sortBy'
 import _filter from "../node_modules/lodash/filter";
+import countTo from 'vue-count-to';
 import axios from "axios";
 
 export default {
   name: "App",
+  components: { countTo },
   data: function() {
     return {
       flCounties: [],
@@ -588,5 +654,13 @@ export default {
 
 .trend-label {
   font-size: 12px;
+}
+.list-group .row{
+  line-height: 1.45;
+  display: flex;
+  align-items: center;
+}
+.list-group{
+  margin-bottom: 0;
 }
 </style>
