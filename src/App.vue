@@ -36,7 +36,7 @@
                         :style="{ width: (county.attributes.TPositive / casesSummary.max) * 100 + '%' }"
                       ></span>
                     </div>
-                    <div class="col-xs-2 text-center">
+                    <div class="col-xs-2 text-center" v-if="countyInfo[county.attributes.COUNTYNAME].pop">
                       <span class="badge"><i class="fa fa-university small" aria-hidden="true"></i> {{((county.attributes.TPositive / countyInfo[county.attributes.COUNTYNAME].pop) * 100000).toFixed(0)}}</span>
                     </div>
                   </div>
