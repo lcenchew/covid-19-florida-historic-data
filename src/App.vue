@@ -606,7 +606,7 @@ export default {
 }
 
 .rank-list {
-  max-height: 300px;
+  max-height: 330px;
   overflow-y: auto;
   overflow-x: hidden;
   padding: 1rem 2rem;
