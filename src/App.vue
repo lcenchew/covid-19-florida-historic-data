@@ -1,18 +1,22 @@
 <template>
   <div class="content container">
     <div id="app">
-      <h1 class="text-center">Florida Coronavirus (COVID-19) Tracker</h1>
-      <div>Daily numbers from the <a
+      <div >
+      <h1 class="text-center text-white">Florida Coronavirus (COVID-19) Tracker</h1>
+      <div class="solid-bk text-center">Daily numbers from the <a
         href="https://fdoh.maps.arcgis.com/apps/opsdashboard/index.html#/8d0de33f260d444c852a615dc7837c86"
-      >Florida Department of Health</a> tracking the Coronavirus progress.</div>
-      <div class="text-center well"><small>State data is updated at approximately 11 a.m. and 6 p.m. daily.</small></div>
+      >Florida Department of Health</a> tracking the Coronavirus progress.
+      <div class="text-center "><small>State data is updated at approximately 11 a.m. and 6 p.m. daily.</small></div>
+      </div>
+      </div>
+
       <div v-if="currentCounty.attributes">
-        <div class="row">
+        <div class="row padded">
           <div class="col-sm-7">
             <div class="text-center">
-              <strong>Top Coronavirus Cases by Florida County</strong>
+              <strong class="text-white">Top Coronavirus Cases by Florida County</strong>
             </div>
-            <div class="rank-list">
+            <div class="rank-list solid-bk">
               <div v-if="flCountiesLoading" class="text-center">
                 <i class="fa fa-refresh fa-spin fa-3x fa-fw"></i>
                 <span class="sr-only">Loading...</span>
@@ -120,6 +124,7 @@
 
       <div class="row">
         <div class="col-md-6">
+          <div class="solid-bk">
           <div class="header">
             <div
               class="chartjs-title"
@@ -130,7 +135,9 @@
           <div class="percentChange">
             <div v-for="percent in selectedCountyCasesIncrease" v-html="percent"></div>
           </div>
+          </div>
           <hr>
+          <div class="solid-bk">
           <div class="header">
             <div
               class="chartjs-title"
@@ -138,8 +145,10 @@
             >{{currentCounty.attributes.County_1}} Testing</div>
           </div>
           <line-chart chart-id="county-testing-chart" :chart-data="lineTestingData" :options="lineTestingOptions" :height="330" :width="400"></line-chart>
+          </div>
         </div>
         <div class="col-md-6">
+           <div class="solid-bk">
           <div class="header">
             <div class="chartjs-title">Florida State Cases</div>
           </div>
@@ -147,11 +156,14 @@
           <div class="percentChange">
             <div v-for="percent in stateCasesIncrease" v-html="percent"></div>
           </div>
+           </div>
           <hr>
+           <div class="solid-bk">
           <div class="header">
             <div class="chartjs-title">Florida State Testing</div>
           </div>
           <line-chart chart-id="state-testing-chart" :chart-data="stateLineTestingData" :options="stateLineTestingOptions" :height="330" :width="400"></line-chart>
+           </div>
         </div>
       </div>
 
