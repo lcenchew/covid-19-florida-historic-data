@@ -181,12 +181,14 @@ import _filter from "../node_modules/lodash/filter";
 import countTo from 'vue-count-to';
 import axios from "axios";
 import LineChart from "./components/LineChart.js";
+let ROOT_PATH = 'https://flacoronavirustracker.com/'
 
 export default {
   name: "App",
   components: { countTo, LineChart },
   data: function() {
     return {
+      logo: ROOT_PATH + require('./assets/logo.png'),
       flCounties: [],
       flCountiesLoading: true,
       alldata: [],
@@ -584,6 +586,24 @@ export default {
       }else{
         return `<span class="text-success">-${(percent).toFixed(0)}%</span>`;
       }
+    }
+  },
+  metaInfo() {
+    return {
+      meta: [
+          // Twitter Card
+          {name: 'twitter:card', content: 'summary'},
+          {name: 'twitter:title', content: 'Florida COVID-19 Tracker'},
+          {name: 'twitter:description', content: 'Track the spread in your florida county.'},
+          // image must be an absolute path
+          {name: 'twitter:image', content: this.logo},
+          // Facebook OpenGraph
+          {property: 'og:title', content: 'Florida COVID-19 Tracker'},
+          {property: 'og:site_name', content: 'flacoronavirustracker.com'},
+          {property: 'og:type', content: 'website'},
+          {property: 'og:image', content:  this.logo},
+          {property: 'og:description', content: 'Track the spread in your florida county.'}
+      ]
     }
   }
 };
