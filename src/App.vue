@@ -1,11 +1,11 @@
 <template>
   <div class="content container">
     <div id="app">
-      <h1 class="text-center">Florida Coronavirus(COVID-19) Tracker</h1>
-      <div>This site captures daily numbers from the <a
+      <h1 class="text-center">Florida Coronavirus (COVID-19) Tracker</h1>
+      <div>Daily numbers from the <a
         href="https://fdoh.maps.arcgis.com/apps/opsdashboard/index.html#/8d0de33f260d444c852a615dc7837c86"
-      >Florida Department of Health</a> to track the Coronavirus progress over time.</div>
-      <div class="text-center"><small>data is updated at approximately 11 a.m. and 6 p.m. daily.</small></div>
+      >Florida Department of Health</a> tracking the Coronavirus progress.</div>
+      <div class="text-center well"><small>State data is updated at approximately 11 a.m. and 6 p.m. daily.</small></div>
       <div v-if="currentCounty.attributes">
         <div class="row">
           <div class="col-sm-7">
@@ -51,12 +51,12 @@
                 <li class="list-group-item">
                   <div class="row">
                     <div class="col-sm-4">
-                      <div class="text-danger fa-3x text-right-desktop" style="line-height:1;">
+                      <div class="text-danger fa-3x text-right-desktop" >
                         <strong><countTo :endVal='currentCounty.attributes.TPositive' :duration='1200'></countTo></strong>
                       </div>
                     </div>
                     <div class="col-sm-8">
-                      <strong>{{currentCounty.attributes.County_1}}<br> Positive Cases</strong>
+                      <strong>{{currentCounty.attributes.County_1}}<br> Positive Cases <span v-if="parseInt(selectedCountyCasesIncrease[selectedCountyCasesIncrease.length - 1]) === 0" v-html="selectedCountyCasesIncrease[selectedCountyCasesIncrease.length - 2]"></span><span v-else v-html="selectedCountyCasesIncrease[selectedCountyCasesIncrease.length - 1]"></span></strong>
                     </div>
                   </div>
                 </li>
@@ -110,34 +110,6 @@
                     </div>
                   </div>
                 </li>
-                <li class="list-group-item">
-                  <div class="row">
-                    <div class="col-sm-4 text-right-desktop">
-                      <div class="">
-                        <strong><countTo :endVal='currentCounty.attributes.T_pending' :duration='1200'></countTo></strong>
-                      </div>
-                    </div>
-                    <div class="col-sm-8">
-                      <div class="d-flex" style="align-items:center;">
-                        <strong>Tests Pending</strong>
-                      </div>
-                    </div>
-                  </div>
-                </li>
-                <li class="list-group-item">
-                  <div class="row">
-                    <div class="col-sm-4 text-right-desktop">
-                      <div class="text-success">
-                        <strong><countTo :endVal='currentCounty.attributes.T_negative' :duration='1200'></countTo></strong>
-                      </div>
-                    </div>
-                    <div class="col-sm-8">
-                      <div class="d-flex" style="align-items:center;">
-                        <strong>Tests Negative</strong>
-                      </div>
-                    </div>
-                  </div>
-                </li>
               </ul>
             </div>
           </div>
@@ -154,24 +126,32 @@
               v-if="currentCounty.attributes"
             >{{currentCounty.attributes.County_1}} Cases</div>
           </div>
-          <line-chart chart-id="county-chart" :chart-data="lineData" :options="lineOptions" :height="250"></line-chart>
+          <line-chart chart-id="county-chart" :chart-data="lineData" :options="lineOptions" :height="330" :width="400"></line-chart>
+          <div class="percentChange">
+            <div v-for="percent in selectedCountyCasesIncrease" v-html="percent"></div>
+          </div>
+          <hr>
           <div class="header">
             <div
               class="chartjs-title"
               v-if="currentCounty.attributes"
             >{{currentCounty.attributes.County_1}} Testing</div>
           </div>
-          <line-chart chart-id="county-testing-chart" :chart-data="lineTestingData" :options="lineTestingOptions" :height="250"></line-chart>
+          <line-chart chart-id="county-testing-chart" :chart-data="lineTestingData" :options="lineTestingOptions" :height="330" :width="400"></line-chart>
         </div>
         <div class="col-md-6">
           <div class="header">
             <div class="chartjs-title">Florida State Cases</div>
           </div>
-          <line-chart chart-id="state-chart" :chart-data="stateLineData" :options="stateLineOptions" :height="250"></line-chart>
+          <line-chart chart-id="state-chart" :chart-data="stateLineData" :options="stateLineOptions" :height="330" :width="400"></line-chart>
+          <div class="percentChange">
+            <div v-for="percent in stateCasesIncrease" v-html="percent"></div>
+          </div>
+          <hr>
           <div class="header">
             <div class="chartjs-title">Florida State Testing</div>
           </div>
-          <line-chart chart-id="state-testing-chart" :chart-data="stateLineTestingData" :options="stateLineTestingOptions" :height="250"></line-chart>
+          <line-chart chart-id="state-testing-chart" :chart-data="stateLineTestingData" :options="stateLineTestingOptions" :height="330" :width="400"></line-chart>
         </div>
       </div>
 
@@ -199,6 +179,10 @@ export default {
       flCountiesLoading: true,
       alldata: [],
       selectedCounty: {},
+      selectedCountyCases: [],
+      selectedCountyCasesIncrease: [],
+      stateCases: [],
+      stateCasesIncrease: [],
       countyInfo: null,
       lineOptions: {
           scales: {
@@ -394,14 +378,7 @@ export default {
       gradient.addColorStop(0, "rgba(255, 0,0, 0.5)");
       gradient.addColorStop(0.5, "rgba(255, 0, 0, 0.25)");
       gradient.addColorStop(1, "rgba(255, 0, 0, 0)");
-      self.lineData = {
-          labels: labels,
-          datasets: [
-            {
-              label: county + " Covid-19 Cases",
-              backgroundColor: gradient,
-              borderColor: "#ea0000",
-              data: results.map(x => {
+      let countyData = results.map(x => {
                 var countyResults = _filter(x.data.features, {
                   attributes: {
                     COUNTYNAME: county.toUpperCase()
@@ -415,6 +392,19 @@ export default {
                   return 0
                 }
               })
+      self.selectedCountyCases = countyData;
+      self.selectedCountyCasesIncrease = countyData.map((x, index) => {
+        let prevDay = index >= 1 ? index - 1 : 0;
+        return self.percentChange(x, countyData[prevDay]);
+      });
+      self.lineData = {
+          labels: labels,
+          datasets: [
+            {
+              label: county + " Covid-19 Cases",
+              backgroundColor: gradient,
+              borderColor: "#ea0000",
+              data: countyData
             },
             {
               label: "Deaths",
@@ -509,6 +499,13 @@ export default {
       gradient.addColorStop(0, "rgba(255, 0,0, 0.5)");
       gradient.addColorStop(0.5, "rgba(255, 0, 0, 0.25)");
       gradient.addColorStop(1, "rgba(255, 0, 0, 0)");
+      let stateCases = resultsSorted.map(x =>
+                parseInt(x.data.features[0].attributes.Positive)
+              );
+      this.stateCasesIncrease = stateCases.map((x, index) => {
+        let prevDay = index >= 1 ? index - 1 : 0;
+        return this.percentChange(x, stateCases[prevDay]);
+      });
       this.stateLineData =  {
           labels: labels,
           datasets: [
@@ -516,9 +513,7 @@ export default {
               label: "Positive",
               backgroundColor: gradient,
               borderColor: "#ea0000",
-              data: resultsSorted.map(x =>
-                parseInt(x.data.features[0].attributes.Positive)
-              ),
+              data: stateCases,
             },
             {
               label: "Deaths",
@@ -565,6 +560,16 @@ export default {
             }
           ]
         }
+    },
+    percentChange: function percentChange(val1 = 0, val2) {
+      let percent = ((val1 - val2) / val1 ) * 100
+      if(percent > 0){
+        return `<span class="text-danger">+${(percent).toFixed(0)}%</span>`;
+      }else if(percent == 0){
+        return `${(percent).toFixed(0)}%`;
+      }else{
+        return `<span class="text-success">-${(percent).toFixed(0)}%</span>`;
+      }
     }
   }
 };
@@ -615,6 +620,16 @@ export default {
   cursor: pointer;
 }
 
+.percentChange{
+  display: flex;
+  justify-content: space-between;
+  font-size: 11px;
+  padding: 0 5px 0 2rem;
+}
+.fa-2x,
+.fa-3x{
+  line-height: 1;
+}
 /* .trend-label::before {
   content: "....";
   color: blue;
