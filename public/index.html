@@ -20,6 +20,7 @@
             height: 100vh;
             position: fixed;
             z-index: -1;
+            background-color: rgb(29, 29, 29);
         }
         
         .solid-bk {
@@ -45,15 +46,19 @@
     <div id="app" v-cloak></div>
     <!-- built files will be auto injected -->
     <script>
-        VANTA.CELLS({
-            el: "#app-wrapper",
-            mouseControls: false,
-            touchControls: false,
-            minHeight: 200.00,
-            minWidth: 200.00,
-            scale: 1.00,
-            scaleMobile: 1.00
-        })
+        if (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) {
+            // some code..
+        } else {
+            VANTA.CELLS({
+                el: "#app-wrapper",
+                mouseControls: false,
+                touchControls: false,
+                minHeight: 200.00,
+                minWidth: 200.00,
+                scale: 1.00,
+                scaleMobile: 1.00
+            })
+        }
     </script>
 </body>
 

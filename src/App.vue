@@ -3,7 +3,7 @@
     <div id="app">
       <div >
       <h1 class="text-center text-white">Florida Coronavirus (COVID-19) Tracker</h1>
-      <div class="solid-bk text-center">Daily numbers from the <a
+      <div class="solid-bk text-center" style="line-height:1.5;">Daily numbers from the <a
         href="https://fdoh.maps.arcgis.com/apps/opsdashboard/index.html#/8d0de33f260d444c852a615dc7837c86"
       >Florida Department of Health</a> tracking the Coronavirus progress.
       <div class="text-center "><small>State data is updated at approximately 11 a.m. and 6 p.m. daily.</small></div>
@@ -24,23 +24,23 @@
               <div v-else>
                 <div v-if="flCounties && flCounties.length">
                   <div
-                    class="row item"
+                    class="item"
                     v-for="county in flCounties"
                     :class="{ active: county.attributes.COUNTYNAME == currentCounty.attributes.COUNTYNAME }"
                     @click="plotData(county.attributes.COUNTYNAME)"
                     :key="county.attributes.COUNTYNAME"
                   >
-                    <div class="col-xs-5 text-right">
+                    <div class="col-name text-right">
                       <span class="countyname">{{ county.attributes.County_1 }}</span>
                     </div>
-                    <div class="col-xs-5 flex flex-row">
+                    <div class="col-cnt flex flex-row">
                       <span class="count">{{ county.attributes.TPositive | toLocal }}</span>
                       <span
                         class="ranking background-primary"
                         :style="{ width: (county.attributes.TPositive / casesSummary.max) * 100 + '%' }"
                       ></span>
                     </div>
-                    <div class="col-xs-2 text-center" v-if="countyInfo[county.attributes.COUNTYNAME].pop">
+                    <div class="col-capital text-center" v-if="countyInfo[county.attributes.COUNTYNAME].pop">
                       <span class="badge"><i class="fa fa-university small" aria-hidden="true"></i> {{((county.attributes.TPositive / countyInfo[county.attributes.COUNTYNAME].pop) * 100000).toFixed(0)}}</span>
                     </div>
                   </div>
@@ -609,12 +609,17 @@ export default {
   max-height: 330px;
   overflow-y: auto;
   overflow-x: hidden;
-  padding: 1rem 2rem;
+  padding: 1rem 0.66rem;
+  margin-bottom: 1rem;
 }
 
 .rank-list .item {
   padding: 5px 0;
+  display: flex;
 }
+.col-name {width: 33%; overflow:hidden; text-overflow: ellipsis;}
+.col-cnt {flex-grow: 1; padding: 0 5px;}
+.col-capital {width: 60px;}
 
 .rank-list .item:nth-child(1) .teamname {
   font-size: 150%;
