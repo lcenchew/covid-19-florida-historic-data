@@ -65,6 +65,14 @@
                   </div>
                 </li>
                 <li class="list-group-item">
+                  Projected Cases based on {{selectedCountyAvg.toFixed(0)}}% growth
+                  <div class="row">
+                    <div class="col-sm-6"><strong>{{compoundInterest(currentCounty.attributes.TPositive, selectedCountyAvg, 3) | toLocal }}</strong> in 3 days</div>
+                    <div class="col-sm-6"><strong>{{compoundInterest(currentCounty.attributes.TPositive, selectedCountyAvg, 7) | toLocal }}</strong> in 7 days</div>
+                  </div>
+
+                </li>
+                <li class="list-group-item">
                   <div class="row">
                     <div class="col-sm-4 text-right-desktop">
                       <div class="badge fa-2x"><i class="fa fa-university small" aria-hidden="true"></i> {{((currentCounty.attributes.TPositive / countyInfo[currentCounty.attributes.COUNTYNAME].pop) * 100000).toFixed(0)}}</div>
@@ -193,6 +201,7 @@ export default {
       flCountiesLoading: true,
       alldata: [],
       selectedCounty: {},
+      selectedCountyAvg: 0,
       selectedCountyCases: [],
       selectedCountyCasesIncrease: [],
       stateCases: [],
@@ -379,7 +388,7 @@ export default {
       var self = this;
       self.$router.push('/'+county.toUpperCase())
       const results = self.alldata.sort((a, b) => a.date - b.date);
-      const labels = results.map(x => x.mmdd);
+      let labels = results.map(x => x.mmdd);
       const thisCountyData = results.map(x => {
         var countyResults = _filter(x.data.features, {
           attributes: {
@@ -394,7 +403,9 @@ export default {
       gradient.addColorStop(0, "rgba(255, 0,0, 0.5)");
       gradient.addColorStop(0.5, "rgba(255, 0, 0, 0.25)");
       gradient.addColorStop(1, "rgba(255, 0, 0, 0)");
+      var projectedData = [];
       let countyData = results.map(x => {
+                projectedData.push(null)
                 var countyResults = _filter(x.data.features, {
                   attributes: {
                     COUNTYNAME: county.toUpperCase()
@@ -409,10 +420,27 @@ export default {
                 }
               })
       self.selectedCountyCases = countyData;
+      let justPercentNumbers = [];
       self.selectedCountyCasesIncrease = countyData.map((x, index) => {
         let prevDay = index >= 1 ? index - 1 : 0;
-        return self.percentChange(x, countyData[prevDay]);
+        let prevDayCnt = countyData[prevDay];
+        let dayChange = self.percentChangeNum(x, prevDayCnt);
+        if(dayChange >0 ){
+          justPercentNumbers.push(dayChange)
+        }
+        return self.percentChange(x, prevDayCnt);
       });
+      let last3Days = justPercentNumbers.slice(Math.max(justPercentNumbers.length - 4, 0))
+      last3Days.pop()
+      let average = last3Days.reduce((a, b) => a + b) / last3Days.length;
+      self.selectedCountyAvg = average;
+      let countyLatestNum = countyData[countyData.length - 1]
+      let plusOne = self.compoundInterest(countyLatestNum, average, 1);
+      let plusTwo = self.compoundInterest(countyLatestNum, average, 2);
+      let plusThree = self.compoundInterest(countyLatestNum, average, 3);
+      projectedData = projectedData.concat(plusOne, plusTwo, plusThree);
+      labels = labels.concat("+1","+2","+3");
+      console.log(projectedData)
       self.lineData = {
           labels: labels,
           datasets: [
@@ -440,6 +468,12 @@ export default {
                   return 0
                 }
               })
+            },
+            {
+              label: "Projected Cases",
+              borderColor: "blue",
+              data: projectedData,
+              borderDash: [5,3]
             }
           ]
         }
@@ -586,6 +620,14 @@ export default {
       }else{
         return `<span class="text-success">-${(percent).toFixed(0)}%</span>`;
       }
+    },
+    percentChangeNum: function percentChangeNum(val1 = 0, val2) {
+      return  parseInt((((val1 - val2) / val1 ) * 100).toFixed(0));
+    },
+    compoundInterest(present_val,interest,times){
+      var x=(1+interest/100)
+      var future_val=present_val*(Math.pow(x,times))
+      return parseInt(future_val.toFixed(0));
     }
   },
   metaInfo() {
@@ -663,7 +705,7 @@ export default {
   display: flex;
   justify-content: space-between;
   font-size: 11px;
-  padding: 0 5px 0 2rem;
+  padding: 0 77px  0 2rem;
 }
 .fa-2x,
 .fa-3x{
