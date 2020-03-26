@@ -14,7 +14,8 @@
     "vue": "^2.6.11",
     "vue-analytics": "^5.22.1",
     "vue-chartjs": "^3.5.0",
-    "vue-count-to": "^1.0.13"
+    "vue-count-to": "^1.0.13",
+    "vue-router": "^3.1.6"
   },
   "devDependencies": {
     "@vue/cli-plugin-babel": "~4.2.0",

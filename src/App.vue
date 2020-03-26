@@ -315,7 +315,8 @@ export default {
       self.flCounties = counties.data.features;
       self.flCountiesLoading = false;
       setTimeout(function(){
-        self.plotData("HILLSBOROUGH"); // plot default
+        let county = self.$route.params.county ? self.$route.params.county.toUpperCase() : "HILLSBOROUGH";
+        self.plotData(county); // plot default
         self.plotDataState(stateResults);
       }, 300);
     } catch (err) {
@@ -362,6 +363,7 @@ export default {
     },
     plotData: function plotData(county) {
       var self = this;
+      self.$router.push('/'+county.toUpperCase())
       const results = self.alldata.sort((a, b) => a.date - b.date);
       const labels = results.map(x => x.mmdd);
       const thisCountyData = results.map(x => {
