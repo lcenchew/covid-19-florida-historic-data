@@ -9,9 +9,6 @@ Vue.config.productionTip = false
 
 import VueAnalytics from 'vue-analytics'
 
-Vue.use(VueAnalytics, {
-    id: 'UA-161455753-1'
-})
 
 Vue.use(VueRouter)
 const routes = [
@@ -19,6 +16,11 @@ const routes = [
 ]
 const router = new VueRouter({
     routes // short for `routes: routes`
+})
+
+Vue.use(VueAnalytics, {
+    id: 'UA-161455753-1',
+    router
 })
 
 new Vue({
