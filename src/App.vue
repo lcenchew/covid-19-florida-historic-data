@@ -41,7 +41,7 @@
                       ></span>
                     </div>
                     <div class="col-capital text-center" v-if="countyInfo[county.attributes.COUNTYNAME].pop">
-                      <span class="badge"><i class="fa fa-university small" aria-hidden="true"></i> {{((county.attributes.TPositive / countyInfo[county.attributes.COUNTYNAME].pop) * 100000).toFixed(0)}}</span>
+                      <span class="badge fa-1x"><i class="fa fa-university small" aria-hidden="true"></i> {{((county.attributes.TPositive / countyInfo[county.attributes.COUNTYNAME].pop) * 100000).toFixed(0)}}</span>
                     </div>
                   </div>
                 </div>
@@ -65,10 +65,10 @@
                   </div>
                 </li>
                 <li class="list-group-item">
-                  Projected Cases based on {{selectedCountyAvg.toFixed(0)}}% growth
+                  <strong>Projected Cases</strong> based on {{selectedCountyAvg.toFixed(0)}}% growth
                   <div class="row">
-                    <div class="col-sm-6"><strong class="badge">{{compoundInterest(currentCounty.attributes.TPositive, selectedCountyAvg, 3) | toLocal }}</strong> in 3 days</div>
-                    <div class="col-sm-6"><strong class="badge">{{compoundInterest(currentCounty.attributes.TPositive, selectedCountyAvg, 7) | toLocal }}</strong> in 7 days</div>
+                    <div class="col-sm-6"><strong class="badge background-secondary fa-1x">{{compoundInterest(currentCounty.attributes.TPositive, selectedCountyAvg, 3) | toLocal }}</strong> in 3 days</div>
+                    <div class="col-sm-6"><strong class="badge background-secondary fa-1x">{{compoundInterest(currentCounty.attributes.TPositive, selectedCountyAvg, 7) | toLocal }}</strong> in 7 days</div>
                   </div>
 
                 </li>
@@ -111,7 +111,7 @@
                 <li class="list-group-item">
                   <div class="row">
                     <div class="col-sm-4 text-right-desktop">
-                      <div class="text-success">
+                      <div >
                         <strong><countTo :endVal='currentCounty.attributes.T_total' :duration='1200'></countTo></strong>
                       </div>
                     </div>
@@ -758,7 +758,7 @@ export default {
 }
 
 .active {
-  outline: solid 3px #00bc8c;
+  outline: solid 3px #00bc8c !important;
 }
 
 .item:hover {
@@ -775,6 +775,9 @@ export default {
 .fa-2x,
 .fa-3x{
   line-height: 1;
+}
+.fa-1x{
+  font-size: 1rem;
 }
 /* .trend-label::before {
   content: "....";
