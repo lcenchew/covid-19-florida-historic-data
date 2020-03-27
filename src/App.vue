@@ -2,13 +2,30 @@
   <div class="content container">
     <div id="app">
       <div class="text-center">
-      <h1 class="text-white">Florida Coronavirus (COVID-19) Tracker</h1>
-      <div class="solid-bk text-center" style="line-height:1.5;">Daily numbers from the <a
-        href="https://fdoh.maps.arcgis.com/apps/opsdashboard/index.html#/8d0de33f260d444c852a615dc7837c86"
-      >Florida Department of Health</a> tracking the Coronavirus progress.
-      <div class=""><small>State data is updated at approximately 11 a.m. and 6 p.m. daily.</small></div>
+        <h1 class="text-white">Florida Coronavirus (COVID-19) Tracker</h1>
+        <div class="solid-bk text-center" style="line-height:1.5;">Daily numbers from the <a
+          href="https://fdoh.maps.arcgis.com/apps/opsdashboard/index.html#/8d0de33f260d444c852a615dc7837c86"
+        >Florida Department of Health</a> tracking the Coronavirus progress.
+        <div class=""><small>State data is updated at approximately 11 a.m. and 6 p.m. daily.</small></div>
+          <div v-if="latestStateValue" class="row padded align-middle align-items-center">
+            <div class="col text-right-desktop"><h2 class="h4">Florida Cases</h2></div>
+            <div class="col text-left">
+              <div class="badge fa-2x"> <countTo :endVal='latestStateValue' :duration='2200'></countTo></div>
+               <span class="p-2" v-if="parseInt(stateCasesIncrease[stateCasesIncrease.length - 1]) === 0" v-html="stateCasesIncrease[stateCasesIncrease.length - 2]"></span><span class="p-2" v-else v-html="stateCasesIncrease[stateCasesIncrease.length - 1]"></span>
+            </div>
+            <div class="col text-right-desktop">
+              <h3 class="h5">Projected Cases</h3>
+            </div>
+            <div class="col">
+              <strong class="badge background-secondary fa-1x"><countTo :endVal='compoundInterest(latestStateValue, stateAvg, 3)' :duration='3000'></countTo></strong> in 3 days
+            </div>
+            <div class="col">
+              <strong class="badge background-secondary fa-1x"><countTo :endVal='compoundInterest(latestStateValue, stateAvg, 7)' :duration='3500'></countTo></strong> in 7 days
+            </div>
+          </div>
+        </div>
       </div>
-      </div>
+
 
       <div v-if="currentCounty.attributes">
         <div class="row padded">
@@ -65,7 +82,7 @@
                   </div>
                 </li>
                 <li class="list-group-item">
-                  <strong>Projected Cases</strong> based on {{selectedCountyAvg.toFixed(0)}}% growth
+                  <strong>Projected Cases</strong> if {{selectedCountyAvg.toFixed(0)}}% avg. trend continues
                   <div class="row">
                     <div class="col-6 col-sm-6"><strong class="badge background-secondary fa-1x">{{compoundInterest(currentCounty.attributes.TPositive, selectedCountyAvg, 3) | toLocal }}</strong> in 3 days</div>
                     <div class="col-6 col-sm-6"><strong class="badge background-secondary fa-1x">{{compoundInterest(currentCounty.attributes.TPositive, selectedCountyAvg, 7) | toLocal }}</strong> in 7 days</div>
@@ -164,7 +181,7 @@
           <line-chart chart-id="state-chart" :chart-data="stateLineData" :options="stateLineOptions" :height="330" :width="400"></line-chart>
           <div class="percentChange">
             <div>Latest Daily Changes</div>
-            <div v-for="percent in selectedCountyCasesIncrease.slice(selectedCountyCasesIncrease.length -5)" v-html="percent"></div>
+            <div v-for="percent in stateCasesIncrease.slice(stateCasesIncrease.length -5)" v-html="percent"></div>
           </div>
            </div>
           <hr>
@@ -216,6 +233,7 @@ export default {
       selectedCountyCasesIncrease: [],
       stateCases: [],
       stateCasesIncrease: [],
+      stateAvg: 0,
       countyInfo: null,
       lineOptions: {
           scales: {
@@ -499,7 +517,7 @@ export default {
       let plusThree = self.compoundInterest(countyLatestNum, average, 3);
       projectedData = projectedData.concat(plusOne, plusTwo, plusThree);
       labels = labels.concat("+1","+2","+3");
-      console.log(projectedData)
+      // console.log(projectedData)
       self.lineData = {
           labels: labels,
           datasets: [
@@ -602,19 +620,39 @@ export default {
         }
     },
     plotDataState: function plotDataState(results) {
+      var self = this;
       const resultsSorted = results.sort((a, b) => a.date - b.date)
-      const labels = resultsSorted.map(x => x.mmdd);
+      let labels = resultsSorted.map(x => x.mmdd);
       let gradient = document.getElementById("state-chart").getContext("2d").createLinearGradient(0, 0, 0, 450);
       gradient.addColorStop(0, "rgba(255, 0,0, 0.5)");
       gradient.addColorStop(0.5, "rgba(255, 0, 0, 0.25)");
       gradient.addColorStop(1, "rgba(255, 0, 0, 0)");
-      let stateCases = resultsSorted.map(x =>
-                parseInt(x.data.features[0].attributes.Positive)
-              );
+      let projectedData = [];
+      let justPercentNumbers = [];
+      let stateCases = resultsSorted.map(x =>{
+        projectedData.push(null)
+        return parseInt(x.data.features[0].attributes.Positive)
+      });
       this.stateCasesIncrease = stateCases.map((x, index) => {
         let prevDay = index >= 1 ? index - 1 : 0;
-        return this.percentChange(x, stateCases[prevDay]);
+        let prevDayCnt = stateCases[prevDay];
+        let dayChange = self.percentChangeNum(x, prevDayCnt);
+        if(dayChange >0 ){
+          justPercentNumbers.push(dayChange)
+        }
+        return self.percentChange(x, stateCases[prevDay]);
       });
+      let last3Days = justPercentNumbers.slice(Math.max(justPercentNumbers.length - 4, 0))
+      last3Days.pop()
+      let average = last3Days.reduce((a, b) => a + b) / last3Days.length;
+      self.stateAvg = average;
+      let latestValue = stateCases[stateCases.length - 1];
+      self.latestStateValue = latestValue;
+      let plusOne = self.compoundInterest(latestValue, average, 1);
+      let plusTwo = self.compoundInterest(latestValue, average, 2);
+      let plusThree = self.compoundInterest(latestValue, average, 3);
+      projectedData = projectedData.concat(plusOne, plusTwo, plusThree);
+      labels = labels.concat("+1","+2","+3");
       this.stateLineData =  {
           labels: labels,
           datasets: [
@@ -629,6 +667,12 @@ export default {
               backgroundColor: "",
               borderColor: "black",
               data: resultsSorted.map(x => x.data.features[0].attributes.Deaths)
+            },
+            {
+              label: "Projected Cases",
+              borderColor: "#00bc8c",
+              data: projectedData,
+              borderDash: [5,3]
             }
           ]
         }
@@ -769,7 +813,7 @@ export default {
 .percentChange{
   display: flex;
   justify-content: space-between;
-  font-size: 11px;
+  font-size: 12px;
 }
 @media only screen and (min-width: 768px){
   .percentChange{
