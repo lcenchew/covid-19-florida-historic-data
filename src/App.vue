@@ -242,6 +242,7 @@ export default {
       stateCases: [],
       stateCasesIncrease: [],
       stateAvg: 0,
+      latestStateValue: 0,
       countyInfo: null,
       lineOptions: {
           scales: {
@@ -471,7 +472,7 @@ export default {
     },
     plotData: function plotData(county) {
       var self = this;
-      self.$router.push('/'+county.toUpperCase())
+      self.$router.push('/'+county.toUpperCase()).catch(err => {console.log(err)})
       const results = self.alldata.sort((a, b) => a.date - b.date);
       let labels = results.map(x => x.mmdd);
       const thisCountyData = results.map(x => {
