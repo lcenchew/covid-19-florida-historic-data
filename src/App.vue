@@ -54,12 +54,12 @@
               <ul class="list-group">
                 <li class="list-group-item">
                   <div class="row">
-                    <div class="col-sm-4">
+                    <div class="col-5 col-sm-4">
                       <div class="badge fa-3x text-right-desktop" >
                         <strong><countTo :endVal='currentCounty.attributes.TPositive' :duration='1200'></countTo></strong>
                       </div>
                     </div>
-                    <div class="col-sm-8">
+                    <div class="col-7 col-sm-8">
                       <strong>{{currentCounty.attributes.County_1}}<br> Positive Cases <span v-if="parseInt(selectedCountyCasesIncrease[selectedCountyCasesIncrease.length - 1]) === 0" v-html="selectedCountyCasesIncrease[selectedCountyCasesIncrease.length - 2]"></span><span v-else v-html="selectedCountyCasesIncrease[selectedCountyCasesIncrease.length - 1]"></span></strong>
                     </div>
                   </div>
@@ -67,41 +67,41 @@
                 <li class="list-group-item">
                   <strong>Projected Cases</strong> based on {{selectedCountyAvg.toFixed(0)}}% growth
                   <div class="row">
-                    <div class="col-sm-6"><strong class="badge background-secondary fa-1x">{{compoundInterest(currentCounty.attributes.TPositive, selectedCountyAvg, 3) | toLocal }}</strong> in 3 days</div>
-                    <div class="col-sm-6"><strong class="badge background-secondary fa-1x">{{compoundInterest(currentCounty.attributes.TPositive, selectedCountyAvg, 7) | toLocal }}</strong> in 7 days</div>
+                    <div class="col-6 col-sm-6"><strong class="badge background-secondary fa-1x">{{compoundInterest(currentCounty.attributes.TPositive, selectedCountyAvg, 3) | toLocal }}</strong> in 3 days</div>
+                    <div class="col-6 col-sm-6"><strong class="badge background-secondary fa-1x">{{compoundInterest(currentCounty.attributes.TPositive, selectedCountyAvg, 7) | toLocal }}</strong> in 7 days</div>
                   </div>
 
                 </li>
                 <li class="list-group-item">
                   <div class="row">
-                    <div class="col-sm-4 text-right-desktop">
+                    <div class="col-5 col-sm-4 text-right-desktop">
                       <div class="badge fa-2x"><i class="fa fa-university small" aria-hidden="true"></i> {{((currentCounty.attributes.TPositive / countyInfo[currentCounty.attributes.COUNTYNAME].pop) * 100000).toFixed(0)}}</div>
                     </div>
-                    <div class="col-sm-8">
+                    <div class="col-7 col-sm-8">
                       <strong>Cases per Capita</strong><br><small>{{((currentCounty.attributes.TPositive / countyInfo[currentCounty.attributes.COUNTYNAME].pop) * 100000).toFixed(0)}} out of 100k people</small>
                     </div>
                   </div>
                 </li>
                 <li class="list-group-item">
                   <div class="row">
-                    <div class="col-sm-4 text-right-desktop">
+                    <div class="col-5 col-sm-4 text-right-desktop">
                       <div class="fa-2x">
                         {{(currentCounty.attributes.TPositive / currentCounty.attributes.T_total) | toPercent }}<sup>%</sup>
                       </div>
                     </div>
-                    <div class="col-sm-8">
+                    <div class="col-7 col-sm-8">
                       <strong>Tested are positive <br> for COVID-19</strong>
                     </div>
                   </div>
                 </li>
                 <li class="list-group-item">
                   <div class="row">
-                    <div class="col-sm-4 text-right-desktop">
+                    <div class="col-5 col-sm-4 text-right-desktop">
                       <div class="fa-2x">
                         {{currentCounty.attributes.FLandNonFLDeaths | toLocal }}
                       </div>
                     </div>
-                    <div class="col-sm-8">
+                    <div class="col-7 col-sm-8">
                       <div class="d-flex" style="align-items:center;">
                         <strong>Deaths</strong>
                       </div>
@@ -110,12 +110,12 @@
                 </li>
                 <li class="list-group-item">
                   <div class="row">
-                    <div class="col-sm-4 text-right-desktop">
+                    <div class="col-5 col-sm-4 text-right-desktop">
                       <div >
                         <strong><countTo :endVal='currentCounty.attributes.T_total' :duration='1200'></countTo></strong>
                       </div>
                     </div>
-                    <div class="col-sm-8">
+                    <div class="col-7 col-sm-8">
                       <div class="d-flex" style="align-items:center;">
                         <strong>Total Tested</strong>
                       </div>
@@ -770,7 +770,11 @@ export default {
   display: flex;
   justify-content: space-between;
   font-size: 11px;
+}
+@media only screen and (min-width: 768px){
+  .percentChange{
   padding: 0 77px  0 2rem;
+}
 }
 .fa-2x,
 .fa-3x{
