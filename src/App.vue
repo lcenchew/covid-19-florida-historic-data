@@ -1,19 +1,19 @@
 <template>
   <div class="content container">
     <div id="app">
-      <div >
-      <h1 class="text-center text-white">Florida Coronavirus (COVID-19) Tracker</h1>
+      <div class="text-center">
+      <h1 class="text-white">Florida Coronavirus (COVID-19) Tracker</h1>
       <div class="solid-bk text-center" style="line-height:1.5;">Daily numbers from the <a
         href="https://fdoh.maps.arcgis.com/apps/opsdashboard/index.html#/8d0de33f260d444c852a615dc7837c86"
       >Florida Department of Health</a> tracking the Coronavirus progress.
-      <div class="text-center "><small>State data is updated at approximately 11 a.m. and 6 p.m. daily.</small></div>
+      <div class=""><small>State data is updated at approximately 11 a.m. and 6 p.m. daily.</small></div>
       </div>
       </div>
 
       <div v-if="currentCounty.attributes">
         <div class="row padded">
           <div class="col-sm-7">
-            <div class="text-center">
+            <div class="text-center background-primary">
               <strong class="text-white">Top Coronavirus Cases by Florida County</strong>
             </div>
             <div class="rank-list solid-bk">
@@ -31,7 +31,7 @@
                     :key="county.attributes.COUNTYNAME"
                   >
                     <div class="col-name text-right">
-                      <span class="countyname">{{ county.attributes.County_1 }}</span>
+                      <span class="countyname">{{ county.attributes.County_1 }}</span> -
                     </div>
                     <div class="col-cnt flex flex-row">
                       <span class="count">{{ county.attributes.TPositive | toLocal }}</span>
@@ -55,7 +55,7 @@
                 <li class="list-group-item">
                   <div class="row">
                     <div class="col-sm-4">
-                      <div class="text-danger fa-3x text-right-desktop" >
+                      <div class="badge fa-3x text-right-desktop" >
                         <strong><countTo :endVal='currentCounty.attributes.TPositive' :duration='1200'></countTo></strong>
                       </div>
                     </div>
@@ -67,8 +67,8 @@
                 <li class="list-group-item">
                   Projected Cases based on {{selectedCountyAvg.toFixed(0)}}% growth
                   <div class="row">
-                    <div class="col-sm-6"><strong>{{compoundInterest(currentCounty.attributes.TPositive, selectedCountyAvg, 3) | toLocal }}</strong> in 3 days</div>
-                    <div class="col-sm-6"><strong>{{compoundInterest(currentCounty.attributes.TPositive, selectedCountyAvg, 7) | toLocal }}</strong> in 7 days</div>
+                    <div class="col-sm-6"><strong class="badge">{{compoundInterest(currentCounty.attributes.TPositive, selectedCountyAvg, 3) | toLocal }}</strong> in 3 days</div>
+                    <div class="col-sm-6"><strong class="badge">{{compoundInterest(currentCounty.attributes.TPositive, selectedCountyAvg, 7) | toLocal }}</strong> in 7 days</div>
                   </div>
 
                 </li>
@@ -141,7 +141,8 @@
           </div>
           <line-chart chart-id="county-chart" :chart-data="lineData" :options="lineOptions" :height="330" :width="400"></line-chart>
           <div class="percentChange">
-            <div v-for="percent in selectedCountyCasesIncrease" v-html="percent"></div>
+            <div>Latest Daily Changes</div>
+            <div v-for="percent in selectedCountyCasesIncrease.slice(selectedCountyCasesIncrease.length -5)" v-html="percent"></div>
           </div>
           </div>
           <hr>
@@ -162,7 +163,8 @@
           </div>
           <line-chart chart-id="state-chart" :chart-data="stateLineData" :options="stateLineOptions" :height="330" :width="400"></line-chart>
           <div class="percentChange">
-            <div v-for="percent in stateCasesIncrease" v-html="percent"></div>
+            <div>Latest Daily Changes</div>
+            <div v-for="percent in selectedCountyCasesIncrease.slice(selectedCountyCasesIncrease.length -5)" v-html="percent"></div>
           </div>
            </div>
           <hr>
@@ -176,6 +178,14 @@
       </div>
 
       <hr />
+
+      <footer class="mt-5 py-4 text-center border-top">
+        <div class="container">
+          <div class="row">
+            <div class="col-12"><p>Created by <a href="https://www.nicholasstees.com/" rel="noopener nofollow" target="_blank">Nicholas Stees</a> a web developer in Tampa Florida</p></div>
+          </div>
+        </div>
+      </footer>
 
     </div>
   </div>
@@ -209,20 +219,41 @@ export default {
       countyInfo: null,
       lineOptions: {
           scales: {
+             xAxes: [{
+               gridLines: {
+                  color: 'rgba(255,255,255,.15)'
+                },
+             }],
             yAxes: [
               {
+                // color: red,
                 ticks: {
                   suggestedMin: 0,
                   precision: 0
-                }
+                },
+                // gridLines: {
+                //   color: 'rgba(255,255,255,.15)'
+                // },
               }
-            ]
-          }
+            ],
+          },
+          legend: {
+            position: 'top',
+            labels: {
+              fontColor: 'rgba(255,255,255,.75)'
+            }
+          },
+
         },
       lineData: {},
       lineTestingOptions: {
           scales: {
-            yAxes: [
+            xAxes: [{
+               gridLines: {
+                  color: 'rgba(255,255,255,.15)'
+                },
+             }],
+             yAxes: [
               {
                 stacked: true,
                 ticks: {
@@ -231,12 +262,23 @@ export default {
                 }
               }
             ]
-          }
+          },
+          legend: {
+            position: 'top',
+            labels: {
+              fontColor: 'rgba(255,255,255,.75)'
+            }
+          },
         },
       lineTestingData: {},
       stateLineOptions:{
           scales: {
-            yAxes: [
+            xAxes: [{
+               gridLines: {
+                  color: 'rgba(255,255,255,.15)'
+                },
+             }],
+             yAxes: [
               {
                 ticks: {
                   suggestedMin: 0,
@@ -244,12 +286,23 @@ export default {
                 }
               }
             ]
-          }
+          },
+          legend: {
+            position: 'top',
+            labels: {
+              fontColor: 'rgba(255,255,255,.75)'
+            }
+          },
         },
       stateLineData:{},
       stateLineTestingOptions:{
           scales: {
-            yAxes: [
+            xAxes: [{
+               gridLines: {
+                  color: 'rgba(255,255,255,.15)'
+                },
+             }],
+             yAxes: [
               {
                 stacked: true,
                 ticks: {
@@ -258,7 +311,13 @@ export default {
                 }
               }
             ]
-          }
+          },
+          legend: {
+            position: 'top',
+            labels: {
+              fontColor: 'rgba(255,255,255,.75)'
+            }
+          },
         },
       stateLineTestingData:{},
     };
@@ -445,7 +504,7 @@ export default {
           labels: labels,
           datasets: [
             {
-              label: county + " Covid-19 Cases",
+              label: "Covid-19 Cases",
               backgroundColor: gradient,
               borderColor: "#ea0000",
               data: countyData
@@ -471,7 +530,7 @@ export default {
             },
             {
               label: "Projected Cases",
-              borderColor: "blue",
+              borderColor: "#00bc8c",
               data: projectedData,
               borderDash: [5,3]
             }
@@ -652,6 +711,11 @@ export default {
 </script>
 
 <style>
+@media only screen and (min-width: 768px){
+.text-right-desktop {
+    text-align: right;
+}
+}
 .ranking {
   height: 32px;
   min-width: 1%;
@@ -668,7 +732,7 @@ export default {
 }
 
 .rank-list {
-  max-height: 330px;
+  max-height: 375px;
   overflow-y: auto;
   overflow-x: hidden;
   padding: 1rem 0.66rem;
@@ -694,11 +758,12 @@ export default {
 }
 
 .active {
-  border: dashed 3px #0072bc;
+  outline: solid 3px #00bc8c;
 }
 
 .item:hover {
   cursor: pointer;
+  outline: solid 3px #00bc8c4f;
 }
 
 .percentChange{
@@ -730,5 +795,8 @@ export default {
 }
 .list-group{
   margin-bottom: 0;
+}
+.text-danger{
+  color: #E74C3C ;
 }
 </style>
