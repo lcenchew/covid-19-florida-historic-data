@@ -510,13 +510,10 @@ export default {
         let prevDay = index >= 1 ? index - 1 : 0;
         let prevDayCnt = countyData[prevDay];
         let dayChange = self.percentChangeNum(x, prevDayCnt);
-        if(dayChange >0 ){
-          justPercentNumbers.push(dayChange)
-        }
+        justPercentNumbers.push(dayChange)
         return self.percentChange(x, prevDayCnt);
       });
       let last3Days = justPercentNumbers.slice(Math.max(justPercentNumbers.length - 4, 0))
-      last3Days.pop()
       let average = last3Days.reduce((a, b) => a + b) / last3Days.length;
       self.selectedCountyAvg = average;
       let countyLatestNum = countyData[countyData.length - 1]
@@ -645,13 +642,10 @@ export default {
         let prevDay = index >= 1 ? index - 1 : 0;
         let prevDayCnt = stateCases[prevDay];
         let dayChange = self.percentChangeNum(x, prevDayCnt);
-        if(dayChange >0 ){
           justPercentNumbers.push(dayChange)
-        }
         return self.percentChange(x, stateCases[prevDay]);
       });
       let last3Days = justPercentNumbers.slice(Math.max(justPercentNumbers.length - 4, 0))
-      last3Days.pop()
       let average = last3Days.reduce((a, b) => a + b) / last3Days.length;
       self.stateAvg = average;
       let latestValue = stateCases[stateCases.length - 1];
