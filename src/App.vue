@@ -7,20 +7,28 @@
           href="https://fdoh.maps.arcgis.com/apps/opsdashboard/index.html#/8d0de33f260d444c852a615dc7837c86"
         >Florida Department of Health</a> tracking the Coronavirus progress.
         <div class=""><small>State data is updated at approximately 11 a.m. and 6 p.m. daily.</small></div>
-          <div v-if="latestStateValue" class="row padded align-middle align-items-center">
-            <div class="col text-right-desktop"><h2 class="h4">Florida Cases</h2></div>
-            <div class="col text-left">
-              <div class="badge fa-2x"> <countTo :endVal='latestStateValue' :duration='2200'></countTo></div>
-               <span class="p-2" v-if="parseInt(stateCasesIncrease[stateCasesIncrease.length - 1]) === 0" v-html="stateCasesIncrease[stateCasesIncrease.length - 2]"></span><span class="p-2" v-else v-html="stateCasesIncrease[stateCasesIncrease.length - 1]"></span>
-            </div>
-            <div class="col text-right-desktop">
-              <h3 class="h5">Projected Cases</h3>
+          <div v-if="latestStateValue" class="row flex-column flex-sm-row padded align-middle align-items-center">
+            <div class="col">
+              <div class="row">
+                <div class="col text-right-desktop"><h2 class="h4">Florida Cases</h2></div>
+                <div class="col text-left">
+                  <div class="badge fa-2x"> <countTo :endVal='latestStateValue' :duration='2200'></countTo></div>
+                  <span class="p-2" v-if="parseInt(stateCasesIncrease[stateCasesIncrease.length - 1]) === 0" v-html="stateCasesIncrease[stateCasesIncrease.length - 2]"></span><span class="p-2" v-else v-html="stateCasesIncrease[stateCasesIncrease.length - 1]"></span>
+                </div>
+              </div>
             </div>
             <div class="col">
-              <strong class="badge background-secondary fa-1x"><countTo :endVal='compoundInterest(latestStateValue, stateAvg, 3)' :duration='3000'></countTo></strong> in 3 days
-            </div>
-            <div class="col">
-              <strong class="badge background-secondary fa-1x"><countTo :endVal='compoundInterest(latestStateValue, stateAvg, 7)' :duration='3500'></countTo></strong> in 7 days
+              <div class="row flex-column flex-sm-row">
+                <div class="col text-right-desktop">
+                  <h3 class="h5">Projected Cases</h3>
+                </div>
+                <div class="col">
+                  <strong class="badge background-secondary fa-1x"><countTo :endVal='compoundInterest(latestStateValue, stateAvg, 3)' :duration='3000'></countTo></strong> in 3 days
+                </div>
+                <div class="col">
+                  <strong class="badge background-secondary fa-1x"><countTo :endVal='compoundInterest(latestStateValue, stateAvg, 7)' :duration='3500'></countTo></strong> in 7 days
+                </div>
+              </div>
             </div>
           </div>
         </div>
