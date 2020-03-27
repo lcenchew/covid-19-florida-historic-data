@@ -12,7 +12,7 @@
 
       <div v-if="currentCounty.attributes">
         <div class="row padded">
-          <div class="col-sm-7">
+          <div class="col-md-6 col-lg-7">
             <div class="text-center background-primary">
               <strong class="text-white">Top Coronavirus Cases by Florida County</strong>
             </div>
@@ -48,7 +48,7 @@
               </div>
             </div>
           </div>
-          <div class="col-sm-5">
+          <div class="col-md-6 col-lg-5">
             <div class="border-primary">
               <div class="background-primary  text-center"><strong>{{currentCounty.attributes.County_1}} Cases</strong></div>
               <ul class="list-group">
