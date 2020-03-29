@@ -627,6 +627,25 @@ export default {
               })
             },
             {
+              label: "Negative",
+              backgroundColor: "green",
+              borderColor: "rgba(202, 0, 0, 0)",
+              data: results.map(x => {
+                var countyResults = _filter(x.data.features, {
+                  attributes: {
+                    COUNTYNAME: county.toUpperCase()
+                  }
+                });
+                if(countyResults.length && countyResults[0].attributes){
+                return countyResults[0].attributes.T_negative
+                  ? countyResults[0].attributes.T_negative
+                  : 0;
+                }else{
+                  return 0
+                }
+              })
+            },
+            {
               label: "Positive",
               backgroundColor: "#ea0000",
               borderColor: "rgba(255, 99, 132, 0)",
@@ -646,8 +665,8 @@ export default {
               })
             },
             {
-              label: "Negative",
-              backgroundColor: "green",
+              label: "Hospitalized",
+              backgroundColor: "yellow",
               borderColor: "rgba(202, 0, 0, 0)",
               data: results.map(x => {
                 var countyResults = _filter(x.data.features, {
@@ -656,14 +675,14 @@ export default {
                   }
                 });
                 if(countyResults.length && countyResults[0].attributes){
-                return countyResults[0].attributes.T_negative
-                  ? countyResults[0].attributes.T_negative
+                return countyResults[0].attributes.C_Hosp_Yes
+                  ? countyResults[0].attributes.C_Hosp_Yes
                   : 0;
                 }else{
                   return 0
                 }
               })
-            }
+            },
           ]
         }
     },
