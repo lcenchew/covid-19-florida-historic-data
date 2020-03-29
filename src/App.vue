@@ -12,7 +12,7 @@
             >Florida Department of Health</a> tracking the Coronavirus progress.
             <div class=""><small>State data is updated after approximately 11 a.m. and 6 p.m. daily.</small></div>
           </div>
-          <div v-if="installBtn" class="btn btn-success p-2" @click="installer()"><i class="fa fa-download"></i> Add To Home Screen for Latest Updates</div>
+          <div v-if="installBtn" class="btn btn-success p-2" @click="installer()"><i class="fa fa-download"></i> Install App for Latest Updates</div>
         </div>
           <div v-if="latestStateValue" class="row flex-column flex-sm-row padded align-middle align-items-center">
             <div class="col">
