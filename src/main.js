@@ -8,6 +8,7 @@ Vue.use(Meta);
 Vue.config.productionTip = false
 
 import VueAnalytics from 'vue-analytics'
+import './registerServiceWorker'
 
 
 Vue.use(VueRouter)
