@@ -5,6 +5,9 @@ import VueRouter from 'vue-router'
 import Meta from 'vue-meta';
 Vue.use(Meta);
 
+require("./assets/css/bootstrap.min.css");
+require("./assets/css/font-awesome.min.css");
+
 Vue.config.productionTip = false
 
 import VueAnalytics from 'vue-analytics'
