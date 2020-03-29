@@ -364,6 +364,7 @@ export default {
   },
   created (){
     let installPrompt;
+    var self = this;
 
     window.addEventListener("beforeinstallprompt" , e => {
       e.preventDefault();
@@ -377,8 +378,10 @@ export default {
       installPrompt.userChoice.then(result =>{
         if (result.outcome === 'accepted'){
           console.log('user accepted')
+          self.$ga.event('pwa', 'accepted', 'yes')
         }else{
           console.log("user denied")
+          self.$ga.event('pwa', 'denied', 'no')
         }
         installPrompt = null;
       })
