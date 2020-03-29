@@ -32,7 +32,7 @@
                 <div class="col text-right-desktop">
                   <h3 class="h5">Projected Cases</h3>
                 </div>
-                <div class="col">
+                <div class="col  text-right-desktop">
                   <strong class="badge background-secondary fa-1x"><countTo :endVal='compoundInterest(latestStateValue, stateAvg, 3)' :duration='3000'></countTo></strong> in 3 days
                 </div>
                 <div class="col">
@@ -102,7 +102,7 @@
                 <li class="list-group-item">
                   <strong>Projected Cases</strong> if {{selectedCountyAvg.toFixed(0)}}% avg. trend continues
                   <div class="row">
-                    <div class="col-6 col-sm-6"><strong class="badge background-secondary fa-1x">{{compoundInterest(currentCounty.attributes.TPositive, selectedCountyAvg, 3) | toLocal }}</strong> in 3 days</div>
+                    <div class="col-6 col-sm-6  text-right-desktop"><strong class="badge background-secondary fa-1x">{{compoundInterest(currentCounty.attributes.TPositive, selectedCountyAvg, 3) | toLocal }}</strong> in 3 days</div>
                     <div class="col-6 col-sm-6"><strong class="badge background-secondary fa-1x">{{compoundInterest(currentCounty.attributes.TPositive, selectedCountyAvg, 7) | toLocal }}</strong> in 7 days</div>
                   </div>
 
