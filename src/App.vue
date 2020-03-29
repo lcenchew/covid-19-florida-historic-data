@@ -1,19 +1,29 @@
 <template>
   <div class="content container">
     <div id="app">
-      <div class="text-center">
-        <h1 class="text-white">Florida Coronavirus (COVID-19) Tracker</h1>
-        <div class="solid-bk text-center" style="line-height:1.5;">Daily numbers from the <a
-          href="https://fdoh.maps.arcgis.com/apps/opsdashboard/index.html#/8d0de33f260d444c852a615dc7837c86"
-        >Florida Department of Health</a> tracking the Coronavirus progress.
-        <div class=""><small>State data is updated at approximately 11 a.m. and 6 p.m. daily.</small></div>
+      <div class="">
+        <div class="text-center">
+          <h1 class="text-white text-center">Florida Coronavirus (COVID-19) Tracker</h1>
+        </div>
+        <div class="solid-bk">
+        <div class="text-center">
+            <div style="line-height:1.5;">Daily numbers from the <a
+              href="https://fdoh.maps.arcgis.com/apps/opsdashboard/index.html#/8d0de33f260d444c852a615dc7837c86"
+            >Florida Department of Health</a> tracking the Coronavirus progress.
+            <div class=""><small>State data is updated after approximately 11 a.m. and 6 p.m. daily.</small></div>
+          </div>
+          <div v-if="installBtn" class="btn btn-success p-2" @click="installer()"><i class="fa fa-download"></i> Add To Home Screen for Latest Updates</div>
+        </div>
           <div v-if="latestStateValue" class="row flex-column flex-sm-row padded align-middle align-items-center">
             <div class="col">
               <div class="row">
-                <div class="col text-right-desktop"><h2 class="h4">Florida Cases</h2></div>
-                <div class="col text-left">
+                <div class="col-4 text-right-desktop"><h2 class="h4">Florida Cases</h2></div>
+                <div class="col-8 text-left">
                   <div class="badge fa-2x"> <countTo :endVal='latestStateValue' :duration='2200'></countTo></div>
                   <span class="p-2" v-if="parseInt(stateCasesIncrease[stateCasesIncrease.length - 1]) === 0" v-html="stateCasesIncrease[stateCasesIncrease.length - 2]"></span><span class="p-2" v-else v-html="stateCasesIncrease[stateCasesIncrease.length - 1]"></span>
+                  <div class="badge" style="background-color:black;">
+                  <span class="fa-2x"> <countTo :endVal='latestDeaths' :duration='1200'></countTo></span> Deaths
+                  </div>
                 </div>
               </div>
             </div>
@@ -122,7 +132,7 @@
                 <li class="list-group-item">
                   <div class="row">
                     <div class="col-5 col-sm-4 text-right-desktop">
-                      <div class="fa-2x">
+                      <div class="badge fa-2x" style="background-color:black;">
                         {{currentCounty.attributes.FLResDeaths | toLocal }}
                       </div>
                     </div>
@@ -232,6 +242,8 @@ export default {
   data: function() {
     return {
       logo: ROOT_PATH + require('./assets/logo.png'),
+      installBtn: false,
+      installer: undefined,
       flCounties: [],
       flCountiesLoading: true,
       alldata: [],
@@ -240,6 +252,7 @@ export default {
       selectedCountyCases: [],
       selectedCountyCasesIncrease: [],
       stateCases: [],
+      latestDeaths: null,
       stateCasesIncrease: [],
       stateAvg: 0,
       latestStateValue: 0,
@@ -348,6 +361,29 @@ export default {
         },
       stateLineTestingData:{},
     };
+  },
+  created (){
+    let installPrompt;
+
+    window.addEventListener("beforeinstallprompt" , e => {
+      e.preventDefault();
+      installPrompt = e;
+      this.installBtn = true;
+    })
+
+    this.installer = () => {
+      this.installBtn = 'none';
+      installPrompt.prompt();
+      installPrompt.userChoice.then(result =>{
+        if (result.outcome === 'accepted'){
+          console.log('user accepted')
+        }else{
+          console.log("user denied")
+        }
+        installPrompt = null;
+      })
+    }
+
   },
   async mounted() {
     // get info
@@ -645,6 +681,9 @@ export default {
         projectedData.push(null)
         return parseInt(x.data.features[0].attributes.Positive)
       });
+      let stateDeaths = resultsSorted.map(x =>{
+        return parseInt(x.data.features[0].attributes.Deaths)
+      });
       this.stateCasesIncrease = stateCases.map((x, index) => {
         let prevDay = index >= 1 ? index - 1 : 0;
         let prevDayCnt = stateCases[prevDay];
@@ -656,6 +695,7 @@ export default {
       let average = last3Days.reduce((a, b) => a + b) / last3Days.length;
       self.stateAvg = average;
       let latestValue = stateCases[stateCases.length - 1];
+      self.latestDeaths = stateDeaths[stateDeaths.length - 1];
       self.latestStateValue = latestValue;
       let plusOne = self.compoundInterest(latestValue, average, 1);
       let plusTwo = self.compoundInterest(latestValue, average, 2);
@@ -675,7 +715,7 @@ export default {
               label: "Deaths",
               backgroundColor: "",
               borderColor: "black",
-              data: resultsSorted.map(x => x.data.features[0].attributes.Deaths)
+              data: stateDeaths
             },
             {
               label: "Projected Cases",
@@ -776,7 +816,7 @@ export default {
 }
 
 .count {
-  min-width: 30px;
+  min-width: 50px;
   padding-right: 5px;
   display: inline-block;
   font-weight: bold;
