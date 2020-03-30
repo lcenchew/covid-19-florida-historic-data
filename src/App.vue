@@ -45,7 +45,7 @@
       </div>
 
 
-      <div v-if="currentCounty.attributes">
+      <div>
         <div class="row padded">
           <div class="col-md-6 col-lg-7">
             <div class="text-center background-primary">
@@ -61,7 +61,7 @@
                   <div
                     class="item"
                     v-for="county in flCounties"
-                    :class="{ active: county.attributes.COUNTYNAME == currentCounty.attributes.COUNTYNAME }"
+                    :class="{ active: currentCounty ? county.attributes.COUNTYNAME == currentCounty.attributes.COUNTYNAME : false }"
                     @click="plotData(county.attributes.COUNTYNAME)"
                     :key="county.attributes.COUNTYNAME"
                   >
@@ -84,17 +84,17 @@
             </div>
           </div>
           <div class="col-md-6 col-lg-5">
-            <div class="border-primary">
+            <div v-if="currentCounty && currentCounty.attributes" class="border-primary">
               <div class="background-primary  text-center"><strong>{{currentCounty.attributes.County_1}} Cases</strong></div>
               <ul class="list-group">
                 <li class="list-group-item">
                   <div class="row">
-                    <div class="col-5 col-sm-4">
+                    <div class="col-6">
                       <div class="badge fa-3x text-right-desktop" >
                         <strong><countTo :endVal='currentCounty.attributes.TPositive' :duration='1200'></countTo></strong>
                       </div>
                     </div>
-                    <div class="col-7 col-sm-8">
+                    <div class="col-6">
                       <strong>{{currentCounty.attributes.County_1}}<br> Positive Cases <span v-if="parseInt(selectedCountyCasesIncrease[selectedCountyCasesIncrease.length - 1]) === 0" v-html="selectedCountyCasesIncrease[selectedCountyCasesIncrease.length - 2]"></span><span v-else v-html="selectedCountyCasesIncrease[selectedCountyCasesIncrease.length - 1]"></span></strong>
                     </div>
                   </div>
@@ -109,34 +109,34 @@
                 </li>
                 <li class="list-group-item">
                   <div class="row">
-                    <div class="col-5 col-sm-4 text-right-desktop">
+                    <div class="col-6 text-right-desktop">
                       <div class="badge fa-2x"><i class="fa fa-university small" aria-hidden="true"></i> {{((currentCounty.attributes.TPositive / countyInfo[currentCounty.attributes.COUNTYNAME].pop) * 100000).toFixed(0)}}</div>
                     </div>
-                    <div class="col-7 col-sm-8">
+                    <div class="col-6">
                       <strong>Cases per Capita</strong><br><small>{{((currentCounty.attributes.TPositive / countyInfo[currentCounty.attributes.COUNTYNAME].pop) * 100000).toFixed(0)}} out of 100k people</small>
                     </div>
                   </div>
                 </li>
                 <li class="list-group-item">
                   <div class="row">
-                    <div class="col-5 col-sm-4 text-right-desktop">
+                    <div class="col-6 text-right-desktop">
                       <div class="fa-2x">
                         {{(currentCounty.attributes.TPositive / currentCounty.attributes.T_total) | toPercent }}<sup>%</sup>
                       </div>
                     </div>
-                    <div class="col-7 col-sm-8">
+                    <div class="col-6">
                       <strong>Tested are positive <br> for COVID-19</strong>
                     </div>
                   </div>
                 </li>
                 <li class="list-group-item">
                   <div class="row">
-                    <div class="col-5 col-sm-4 text-right-desktop">
+                    <div class="col-6 text-right-desktop">
                       <div class="badge fa-2x" style="background-color:black;">
                         {{currentCounty.attributes.FLResDeaths | toLocal }}
                       </div>
                     </div>
-                    <div class="col-7 col-sm-8">
+                    <div class="col-6">
                       <div class="d-flex" style="align-items:center;">
                         <strong>Deaths</strong>
                       </div>
@@ -145,12 +145,12 @@
                 </li>
                 <li class="list-group-item">
                   <div class="row">
-                    <div class="col-5 col-sm-4 text-right-desktop">
+                    <div class="col-6 text-right-desktop">
                       <div >
                         <strong><countTo :endVal='currentCounty.attributes.T_total' :duration='1200'></countTo></strong>
                       </div>
                     </div>
-                    <div class="col-7 col-sm-8">
+                    <div class="col-6">
                       <div class="d-flex" style="align-items:center;">
                         <strong>Total Tested</strong>
                       </div>
@@ -228,7 +228,7 @@
 
 <script>
 // import HelloWorld from './components/HelloWorld.vue'
-// import _find from '../node_modules/lodash/find'
+import _remove from '../node_modules/lodash/remove'
 // import _sortBy from '../node_modules/lodash/sortBy'
 import _filter from "../node_modules/lodash/filter";
 import countTo from 'vue-count-to';
@@ -466,6 +466,12 @@ export default {
       let countyInfo = await axios.get('/assets/data/county-info.json');
       self.countyInfo = countyInfo.data;
       self.alldata = results; //all done fetching data
+      // remove unkown county
+      _remove(counties.data.features, {
+        attributes: {
+          COUNTY: "999"
+        }
+      });
       self.flCounties = counties.data.features;
       self.flCountiesLoading = false;
       setTimeout(function(){
@@ -501,7 +507,11 @@ export default {
       };
     },
     currentCounty: function currentCounty() {
-      return this.selectedCounty;
+      if(this.selectedCounty && this.selectedCounty.attributes){
+        return this.selectedCounty;
+      }else{
+        return false;
+      }
     }
   },
   methods: {
@@ -529,7 +539,12 @@ export default {
         return countyResults ? countyResults[0] : null;
       });
       // most recent results move to selected county
-      self.selectedCounty = thisCountyData[thisCountyData.length - 1];
+      let selectedCountyRecent = thisCountyData[thisCountyData.length - 1];
+      if(!selectedCountyRecent.attributes) {
+        self.$router.push("HILLSBOROUGH").catch(err => {console.log(err)})
+        return null
+          }
+      self.selectedCounty = selectedCountyRecent;
       var gradient = document.getElementById("county-chart").getContext("2d").createLinearGradient(0, 0, 0, 450);
       gradient.addColorStop(0, "rgba(255, 0,0, 0.5)");
       gradient.addColorStop(0.5, "rgba(255, 0, 0, 0.25)");
