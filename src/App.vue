@@ -418,6 +418,7 @@ export default {
           });
           } catch (err) {
             console.log(err);
+            self.$ga.event('error', 'fetchedData', err)
           }
         });
       // get now data
@@ -435,6 +436,7 @@ export default {
           }
         } catch (err) {
           console.log(err);
+          self.$ga.event('error', 'nowData', err)
         }
       }
 
@@ -458,9 +460,11 @@ export default {
             }
           } catch (err) {
             console.log(err);
+            self.$ga.event('error', 'stateResults', err)
           }
           } catch (err) {
             console.log(err);
+            self.$ga.event('error', 'fetchedStateData', err)
           }
         });
         console.log(hour)
@@ -479,6 +483,7 @@ export default {
             }
           } catch (err) {
             console.log(err);
+            self.$ga.event('error', 'fetchedNowStateData', err)
           }
         }
       let countyInfo = await axios.get('/assets/data/county-info.json');
@@ -499,6 +504,7 @@ export default {
       }, 300);
     } catch (err) {
       console.log(err);
+      self.$ga.event('error', 'mounted', err)
     }
   },
   filters: {
@@ -541,11 +547,13 @@ export default {
       try {
       } catch (err) {
         console.log(err);
+        self.$ga.event('error', 'getData', err)
       }
     },
     plotData: function plotData(county) {
       var self = this;
-      self.$router.push('/'+county.toUpperCase()).catch(err => {console.log(err)})
+      self.$router.push('/'+county.toUpperCase()).catch(err => {console.log(err);})
+
       const results = self.alldata.sort((a, b) => a.date - b.date);
       let labels = results.map(x => x.mmdd);
       const thisCountyData = results.map(x => {
@@ -560,6 +568,7 @@ export default {
       let selectedCountyRecent = thisCountyData[thisCountyData.length - 1];
       if(!selectedCountyRecent.attributes) {
         self.$router.push("HILLSBOROUGH").catch(err => {console.log(err)})
+        self.$ga.event('error', 'selectedCountyRecent', err)
         return null
           }
       self.selectedCounty = selectedCountyRecent;
