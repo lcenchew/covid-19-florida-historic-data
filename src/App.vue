@@ -89,8 +89,8 @@
               <ul class="list-group">
                 <li class="list-group-item">
                   <div class="row">
-                    <div class="col-6">
-                      <div class="badge fa-3x text-right-desktop" >
+                    <div class="col-6 text-right-desktop">
+                      <div class="badge fa-3x" >
                         <strong><countTo :endVal='currentCounty.attributes.TPositive' :duration='1200'></countTo></strong>
                       </div>
                     </div>
