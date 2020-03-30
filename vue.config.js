@@ -30,6 +30,9 @@ module.exports = {
         //   swSrc: "dev/sw.js",
         //   // ...other Workbox options...
         // },
+        workboxOptions: {
+            skipWaiting: true
+        },
         iconPaths: {
             favicon16: "img/icons/favicon-16x16.png",
             favicon32: "img/icons/favicon-32x32.png",
