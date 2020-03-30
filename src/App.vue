@@ -425,11 +425,17 @@ export default {
         let nowData = await axios.get(
           "https://services1.arcgis.com/CY1LXxl9zlJeBuRZ/arcgis/rest/services/Florida_COVID19_Cases/FeatureServer/0/query?f=json&where=T_positive%20IS%20NOT%20NULL&returnGeometry=false&spatialRel=esriSpatialRelIntersects&outFields=*&orderByFields=T_positive%20desc&outSR=102100&resultOffset=0&resultRecordCount=67&cacheHint=true"
         );
-        results.push({
-          date: `${today.getFullYear()}${todayMonth}${todayDay}9`,
-          mmdd: `now`,
-          data: nowData.data
-        });
+        try {
+          if(!nowData.data.error){
+            results.push({
+              date: `${today.getFullYear()}${todayMonth}${todayDay}9`,
+              mmdd: `now`,
+              data: nowData.data
+            });
+          }
+        } catch (err) {
+          console.log(err);
+        }
       }
 
       // State data
@@ -442,11 +448,17 @@ export default {
           try {
           let response = await axios.get(`/assets/data/${day}.json`);
           day = day.replace("state-", "").trim();
-          stateResults.push({
-            date: day,
-            mmdd: day.substring(4, 6) + "/" + day.slice(-2),
-            data: response.data
-          });
+          try {
+            if(!response.data.error){
+              stateResults.push({
+                date: day,
+                mmdd: day.substring(4, 6) + "/" + day.slice(-2),
+                data: response.data
+              });
+            }
+          } catch (err) {
+            console.log(err);
+          }
           } catch (err) {
             console.log(err);
           }
@@ -457,11 +469,17 @@ export default {
           let fetchedNowStateData = await axios.get(
             "https://services1.arcgis.com/CY1LXxl9zlJeBuRZ/arcgis/rest/services/Florida_COVID19_Cases/FeatureServer/0/query?f=json&where=1%3D1&returnGeometry=false&spatialRel=esriSpatialRelIntersects&outFields=*&outStatistics=%5B%7B%22statisticType%22%3A%22sum%22%2C%22onStatisticField%22%3A%22FLResDeaths%22%2C%22outStatisticFieldName%22%3A%22Deaths%22%7D%2C%7B%22statisticType%22%3A%22sum%22%2C%22onStatisticField%22%3A%22T_positive%22%2C%22outStatisticFieldName%22%3A%22Positive%22%7D%2C%7B%22statisticType%22%3A%22sum%22%2C%22onStatisticField%22%3A%22C_Hosp_Yes%22%2C%22outStatisticFieldName%22%3A%22Hospitalized%22%7D%2C%7B%22statisticType%22%3A%22sum%22%2C%22onStatisticField%22%3A%22T_total%22%2C%22outStatisticFieldName%22%3A%22TotalTests%22%7D%2C%7B%22statisticType%22%3A%22sum%22%2C%22onStatisticField%22%3A%22T_negative%22%2C%22outStatisticFieldName%22%3A%22Negative%22%7D%2C%7B%22statisticType%22%3A%22sum%22%2C%22onStatisticField%22%3A%22TPending%22%2C%22outStatisticFieldName%22%3A%22Pending%22%7D%5D&outSR=102100&cacheHint=true"
           );
-          stateResults.push({
-            date: `9${today.getFullYear()}${todayMonth}${todayDay}`,
-            mmdd: `now`,
-            data: fetchedNowStateData.data
-          });
+          try {
+            if(!fetchedNowStateData.data.error){
+              stateResults.push({
+                date: `9${today.getFullYear()}${todayMonth}${todayDay}`,
+                mmdd: `now`,
+                data: fetchedNowStateData.data
+              });
+            }
+          } catch (err) {
+            console.log(err);
+          }
         }
       let countyInfo = await axios.get('/assets/data/county-info.json');
       self.countyInfo = countyInfo.data;
