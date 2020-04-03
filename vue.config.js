@@ -17,7 +17,7 @@ module.exports = {
         ],
     },
     pwa: {
-        name: "COVID-19",
+        name: "COVID Tracker",
         themeColor: "#4DBA87",
         msTileColor: "#000000",
         appleMobileWebAppCapable: "yes",
