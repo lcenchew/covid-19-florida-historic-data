@@ -186,12 +186,22 @@
             <div
               class="chartjs-title"
               v-if="currentCounty.attributes"
+            >{{currentCounty.attributes.County_1}}</div>
+          </div>
+          <line-chart chart-id="county-chart2" :chart-data="barData2" :options="barOptions2" :height="330" :width="400"></line-chart>
+          </div>
+          <hr>
+          <div class="solid-bk">
+          <div class="header">
+            <div
+              class="chartjs-title"
+              v-if="currentCounty.attributes"
             >{{currentCounty.attributes.County_1}} Testing</div>
           </div>
           <line-chart chart-id="county-testing-chart" :chart-data="lineTestingData" :options="lineTestingOptions" :height="330" :width="400"></line-chart>
           </div>
         </div>
-        <div class="col-md-6">
+        <div class="col-md-6 state-col">
            <div class="solid-bk">
           <div class="header">
             <div class="chartjs-title">Florida State Cases</div>
@@ -202,6 +212,15 @@
             <div v-for="percent in stateCasesIncrease.slice(stateCasesIncrease.length -5)" v-html="percent"></div>
           </div>
            </div>
+          <hr>
+          <div class="solid-bk">
+          <div class="header">
+            <div
+              class="chartjs-title"
+            >Florida State Deaths</div>
+          </div>
+          <line-chart chart-id="state-chart2" :chart-data="stateBarDataDeaths" :options="barOptions2" :height="330" :width="400"></line-chart>
+          </div>
           <hr>
            <div class="solid-bk">
           <div class="header">
@@ -234,11 +253,12 @@ import _filter from "../node_modules/lodash/filter";
 import countTo from 'vue-count-to';
 import axios from "axios";
 import LineChart from "./components/LineChart.js";
+import BarChart from "./components/BarChart.js";
 let ROOT_PATH = 'https://flacoronavirustracker.com/'
 
 export default {
   name: "App",
-  components: { countTo, LineChart },
+  components: { countTo, LineChart, BarChart },
   data: function() {
     return {
       logo: ROOT_PATH + require('./assets/logo.png'),
@@ -251,6 +271,8 @@ export default {
       selectedCountyAvg: 0,
       selectedCountyCases: [],
       selectedCountyCasesIncrease: [],
+      selectedCountyIncreaseByDay: [],
+      selectedStateIncreaseByDay: [],
       stateCases: [],
       latestDeaths: null,
       stateCasesIncrease: [],
@@ -276,6 +298,25 @@ export default {
                 // },
               }
             ],
+          },
+          legend: {
+            position: 'top',
+            labels: {
+              fontColor: 'rgba(255,255,255,.75)'
+            }
+          },
+
+        },
+      barData2: {},
+      stateBarDataDeaths: {},
+      barOptions2: {
+          scales: {
+              xAxes: [{
+                  stacked: true
+              }],
+              yAxes: [{
+                  stacked: true
+              }]
           },
           legend: {
             position: 'top',
@@ -556,6 +597,7 @@ export default {
 
       const results = self.alldata.sort((a, b) => a.date - b.date);
       let labels = results.map(x => x.mmdd);
+      let labelsOriginal = labels;
       const thisCountyData = results.map(x => {
         var countyResults = _filter(x.data.features, {
           attributes: {
@@ -576,6 +618,10 @@ export default {
       gradient.addColorStop(0, "rgba(255, 0,0, 0.5)");
       gradient.addColorStop(0.5, "rgba(255, 0, 0, 0.25)");
       gradient.addColorStop(1, "rgba(255, 0, 0, 0)");
+      let gradientBlack = document.getElementById("county-chart2").getContext("2d").createLinearGradient(0, 0, 0, 450);
+      gradientBlack.addColorStop(0, "rgba(0, 0, 0, 0.75)");
+      gradientBlack.addColorStop(0.5, "rgba(0, 0, 0, 0.55)");
+      gradientBlack.addColorStop(1, "rgba(0, 0, 0, .2)");
       var projectedData = [];
       let countyData = results.map(x => {
                 projectedData.push(null)
@@ -601,6 +647,11 @@ export default {
         justPercentNumbers.push(dayChange)
         return self.percentChange(x, prevDayCnt);
       });
+      self.selectedCountyIncreaseByDay = countyData.map((x, index) => {
+        let prevDay = index >= 1 ? index - 1 : 0;
+        let prevDayCnt = countyData[prevDay];
+        return self.diffChange(x, prevDayCnt);
+      });
       let last3Days = justPercentNumbers.slice(Math.max(justPercentNumbers.length - 4, 0))
       let average = last3Days.reduce((a, b) => a + b) / last3Days.length;
       self.selectedCountyAvg = average;
@@ -615,14 +666,32 @@ export default {
           labels: labels,
           datasets: [
             {
-              label: "Covid-19 Cases",
+              label: "Total Positive",
               backgroundColor: gradient,
               borderColor: "#ea0000",
               data: countyData
             },
             {
-              label: "Deaths",
-              backgroundColor: "black",
+              label: "Projected Cases",
+              borderColor: "#00bc8c",
+              data: projectedData,
+              borderDash: [5,3]
+            },
+            {
+              label: "New Per Day",
+              backgroundColor: "#ce4307",
+              borderColor: "#ea0000",
+              data: self.selectedCountyIncreaseByDay,
+              type: 'bar'
+            },
+          ]
+        }
+      self.barData2 = {
+          labels: labelsOriginal,
+          datasets: [
+            {
+              label: "Total Deaths",
+              backgroundColor: gradientBlack,
               borderColor: "rgba(202, 0, 0, 0)",
               data: results.map(x => {
                 var countyResults = _filter(x.data.features, {
@@ -638,12 +707,6 @@ export default {
                   return 0
                 }
               })
-            },
-            {
-              label: "Projected Cases",
-              borderColor: "#00bc8c",
-              data: projectedData,
-              borderDash: [5,3]
             }
           ]
         }
@@ -673,7 +736,7 @@ export default {
             },
             {
               label: "Negative",
-              backgroundColor: "green",
+              backgroundColor: "rgba(2, 95, 2, 1)",
               borderColor: "rgba(202, 0, 0, 0)",
               data: results.map(x => {
                 var countyResults = _filter(x.data.features, {
@@ -735,10 +798,15 @@ export default {
       var self = this;
       const resultsSorted = results.sort((a, b) => a.date - b.date)
       let labels = resultsSorted.map(x => x.mmdd);
+      let labelsOriginal = labels;
       let gradient = document.getElementById("state-chart").getContext("2d").createLinearGradient(0, 0, 0, 450);
       gradient.addColorStop(0, "rgba(255, 0,0, 0.5)");
       gradient.addColorStop(0.5, "rgba(255, 0, 0, 0.25)");
       gradient.addColorStop(1, "rgba(255, 0, 0, 0)");
+      let gradientBlack = document.getElementById("county-chart2").getContext("2d").createLinearGradient(0, 0, 0, 450);
+      gradientBlack.addColorStop(0, "rgba(0, 0, 0, 0.75)");
+      gradientBlack.addColorStop(0.5, "rgba(0, 0, 0, 0.55)");
+      gradientBlack.addColorStop(1, "rgba(0, 0, 0, .2)");
       let projectedData = [];
       let justPercentNumbers = [];
       let stateCases = resultsSorted.map(x =>{
@@ -755,6 +823,11 @@ export default {
           justPercentNumbers.push(dayChange)
         return self.percentChange(x, stateCases[prevDay]);
       });
+      self.selectedStateIncreaseByDay = stateCases.map((x, index) => {
+        let prevDay = index >= 1 ? index - 1 : 0;
+        let prevDayCnt = stateCases[prevDay];
+        return self.diffChange(x, prevDayCnt);
+      });
       let last3Days = justPercentNumbers.slice(Math.max(justPercentNumbers.length - 4, 0))
       let average = last3Days.reduce((a, b) => a + b) / last3Days.length;
       self.stateAvg = average;
@@ -770,23 +843,35 @@ export default {
           labels: labels,
           datasets: [
             {
-              label: "Positive",
+              label: "Total Positive",
               backgroundColor: gradient,
               borderColor: "#ea0000",
               data: stateCases,
-            },
-            {
-              label: "Deaths",
-              backgroundColor: "",
-              borderColor: "black",
-              data: stateDeaths
             },
             {
               label: "Projected Cases",
               borderColor: "#00bc8c",
               data: projectedData,
               borderDash: [5,3]
-            }
+            },
+            {
+              label: "New Per Day",
+              backgroundColor: "#ce4307",
+              borderColor: "#ea0000",
+              data: self.selectedStateIncreaseByDay,
+              type: 'bar'
+            },
+          ]
+        }
+      this.stateBarDataDeaths =  {
+          labels: labelsOriginal,
+          datasets: [
+            {
+              label: "Deaths",
+              backgroundColor: gradientBlack,
+              borderColor: "black",
+              data: stateDeaths
+            },
           ]
         }
       const labels2 = resultsSorted.map(x => x.mmdd);
@@ -802,7 +887,7 @@ export default {
             },
             {
               label: "Negative",
-              backgroundColor: "green",
+              backgroundColor: "rgba(2, 95, 2, 1)",
               borderColor: "rgba(202, 0, 0, 0)",
               data: resultsSorted.map(x => x.data.features[0].attributes.Negative)
             },
@@ -839,6 +924,9 @@ export default {
     },
     percentChangeNum: function percentChangeNum(val1 = 0, val2) {
       return  parseInt((((val1 - val2) / val1 ) * 100).toFixed(0));
+    },
+    diffChange: function diffChange(val1, val2) {
+      return  (val1 - val2).toFixed(0);
     },
     compoundInterest(present_val,interest,times){
       var x=(1+interest/100)
@@ -889,11 +977,22 @@ export default {
 }
 
 .rank-list {
-  max-height: 375px;
+  max-height: 40vh;
   overflow-y: auto;
   overflow-x: hidden;
   padding: 1rem 0.66rem;
   margin-bottom: 1rem;
+}
+.state-col{
+  margin-top: 2rem;
+}
+@media only screen and (min-width: 768px){
+  .rank-list {
+    max-height: 415px;
+  }
+  .state-col{
+    margin-top: 0;
+  }
 }
 
 .rank-list .item {
