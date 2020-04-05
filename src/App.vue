@@ -85,7 +85,7 @@
           </div>
           <div class="col-md-6 col-lg-5">
             <div v-if="currentCounty && currentCounty.attributes" class="border-primary">
-              <div class="background-primary  text-center"><strong>{{currentCounty.attributes.County_1}} Cases</strong></div>
+              <div class="background-primary  text-center"><strong>{{currentCounty.attributes.County_1}} County Cases</strong></div>
               <ul class="list-group">
                 <li class="list-group-item">
                   <div class="row">
@@ -95,7 +95,7 @@
                       </div>
                     </div>
                     <div class="col-6">
-                      <strong>{{currentCounty.attributes.County_1}}<br> Positive Cases <span v-if="parseInt(selectedCountyCasesIncrease[selectedCountyCasesIncrease.length - 1]) === 0" v-html="selectedCountyCasesIncrease[selectedCountyCasesIncrease.length - 2]"></span><span v-else v-html="selectedCountyCasesIncrease[selectedCountyCasesIncrease.length - 1]"></span></strong>
+                      <strong>{{currentCounty.attributes.County_1}} County<br> Positive Cases <span v-if="parseInt(selectedCountyCasesIncrease[selectedCountyCasesIncrease.length - 1]) === 0" v-html="selectedCountyCasesIncrease[selectedCountyCasesIncrease.length - 2]"></span><span v-else v-html="selectedCountyCasesIncrease[selectedCountyCasesIncrease.length - 1]"></span></strong>
                     </div>
                   </div>
                 </li>
