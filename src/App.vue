@@ -172,7 +172,7 @@
             <div
               class="chartjs-title"
               v-if="currentCounty.attributes"
-            >{{currentCounty.attributes.County_1}} Cases</div>
+            >{{currentCounty.attributes.County_1}} County Cases</div>
           </div>
           <line-chart chart-id="county-chart" :chart-data="lineData" :options="lineOptions" :height="330" :width="400"></line-chart>
           <div class="percentChange">
@@ -186,7 +186,7 @@
             <div
               class="chartjs-title"
               v-if="currentCounty.attributes"
-            >{{currentCounty.attributes.County_1}}</div>
+            >{{currentCounty.attributes.County_1}} County</div>
           </div>
           <line-chart chart-id="county-chart2" :chart-data="barData2" :options="barOptions2" :height="330" :width="400"></line-chart>
           </div>
@@ -196,7 +196,7 @@
             <div
               class="chartjs-title"
               v-if="currentCounty.attributes"
-            >{{currentCounty.attributes.County_1}} Testing</div>
+            >{{currentCounty.attributes.County_1}} County Testing</div>
           </div>
           <line-chart chart-id="county-testing-chart" :chart-data="lineTestingData" :options="lineTestingOptions" :height="330" :width="400"></line-chart>
           </div>
