@@ -692,7 +692,7 @@ export default {
             {
               label: "Total Deaths",
               backgroundColor: gradientBlack,
-              borderColor: "rgba(202, 0, 0, 0)",
+              borderColor: "#929292",
               data: results.map(x => {
                 var countyResults = _filter(x.data.features, {
                   attributes: {
@@ -869,7 +869,7 @@ export default {
             {
               label: "Deaths",
               backgroundColor: gradientBlack,
-              borderColor: "black",
+              borderColor: "#929292",
               data: stateDeaths
             },
           ]
