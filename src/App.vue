@@ -272,7 +272,9 @@ export default {
       selectedCountyCases: [],
       selectedCountyCasesIncrease: [],
       selectedCountyIncreaseByDay: [],
+      selectedCountyIncreaseDeathsByDay: [],
       selectedStateIncreaseByDay: [],
+      selectedStateIncreaseDeathsByDay: [],
       stateCases: [],
       latestDeaths: null,
       stateCasesIncrease: [],
@@ -315,7 +317,11 @@ export default {
                   stacked: true
               }],
               yAxes: [{
-                  stacked: true
+                  stacked: true,
+                  ticks: {
+                  suggestedMin: 0,
+                  precision: 0
+                }
               }]
           },
           legend: {
@@ -686,14 +692,8 @@ export default {
             },
           ]
         }
-      self.barData2 = {
-          labels: labelsOriginal,
-          datasets: [
-            {
-              label: "Total Deaths",
-              backgroundColor: gradientBlack,
-              borderColor: "#929292",
-              data: results.map(x => {
+      let countyDeathsData = results.map(x => {
+                projectedData.push(null)
                 var countyResults = _filter(x.data.features, {
                   attributes: {
                     COUNTYNAME: county.toUpperCase()
@@ -707,6 +707,26 @@ export default {
                   return 0
                 }
               })
+      self.selectedCountyIncreaseDeathsByDay = countyDeathsData.map((x, index) => {
+        let prevDay = index >= 1 ? index - 1 : 0;
+        let prevDayCnt = countyDeathsData[prevDay];
+        return self.diffChange(x, prevDayCnt);
+      });
+      self.barData2 = {
+          labels: labelsOriginal,
+          datasets: [
+            {
+              label: "Total Deaths",
+              backgroundColor: gradientBlack,
+              borderColor: "#929292",
+              data: countyDeathsData
+            },
+            {
+              label: "New Per Day",
+              backgroundColor: "#ce4307",
+              borderColor: "#ea0000",
+              data: self.selectedCountyIncreaseDeathsByDay,
+              type: 'bar'
             }
           ]
         }
@@ -863,6 +883,11 @@ export default {
             },
           ]
         }
+      this.selectedStateIncreaseDeathsByDay = stateDeaths.map((x, index) => {
+        let prevDay = index >= 1 ? index - 1 : 0;
+        let prevDayCnt = stateDeaths[prevDay];
+        return self.diffChange(x, prevDayCnt);
+      });
       this.stateBarDataDeaths =  {
           labels: labelsOriginal,
           datasets: [
@@ -872,6 +897,13 @@ export default {
               borderColor: "#929292",
               data: stateDeaths
             },
+            {
+              label: "New Per Day",
+              backgroundColor: "#ce4307",
+              borderColor: "#ea0000",
+              data: self.selectedStateIncreaseDeathsByDay,
+              type: 'bar'
+            }
           ]
         }
       const labels2 = resultsSorted.map(x => x.mmdd);
