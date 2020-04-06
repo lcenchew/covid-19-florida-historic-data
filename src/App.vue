@@ -314,7 +314,10 @@ export default {
       barOptions2: {
           scales: {
               xAxes: [{
-                  stacked: true
+                  stacked: true,
+                  gridLines: {
+                  color: 'rgba(255,255,255,.15)'
+                },
               }],
               yAxes: [{
                   stacked: true,
