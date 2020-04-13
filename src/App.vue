@@ -131,9 +131,9 @@
                 </li>
                 <li class="list-group-item">
                   <div class="row">
-                    <div class="col-6 text-right-desktop">
+                    <div class="col-6 text-right-desktop" v-if="currentCounty.attributes.C_FLResDeaths">
                       <div class="badge fa-2x" style="background-color:black;">
-                        {{currentCounty.attributes.FLResDeaths | toLocal }}
+                        {{currentCounty.attributes.C_FLResDeaths | toLocal }}
                       </div>
                     </div>
                     <div class="col-6">
@@ -521,7 +521,7 @@ export default {
         if (hour >= 11) {
           // Now state data
           let fetchedNowStateData = await axios.get(
-            "https://services1.arcgis.com/CY1LXxl9zlJeBuRZ/arcgis/rest/services/Florida_COVID19_Cases/FeatureServer/0/query?f=json&where=1%3D1&returnGeometry=false&spatialRel=esriSpatialRelIntersects&outFields=*&outStatistics=%5B%7B%22statisticType%22%3A%22sum%22%2C%22onStatisticField%22%3A%22FLResDeaths%22%2C%22outStatisticFieldName%22%3A%22Deaths%22%7D%2C%7B%22statisticType%22%3A%22sum%22%2C%22onStatisticField%22%3A%22T_positive%22%2C%22outStatisticFieldName%22%3A%22Positive%22%7D%2C%7B%22statisticType%22%3A%22sum%22%2C%22onStatisticField%22%3A%22C_Hosp_Yes%22%2C%22outStatisticFieldName%22%3A%22Hospitalized%22%7D%2C%7B%22statisticType%22%3A%22sum%22%2C%22onStatisticField%22%3A%22T_total%22%2C%22outStatisticFieldName%22%3A%22TotalTests%22%7D%2C%7B%22statisticType%22%3A%22sum%22%2C%22onStatisticField%22%3A%22T_negative%22%2C%22outStatisticFieldName%22%3A%22Negative%22%7D%2C%7B%22statisticType%22%3A%22sum%22%2C%22onStatisticField%22%3A%22TPending%22%2C%22outStatisticFieldName%22%3A%22Pending%22%7D%5D&outSR=102100&cacheHint=true"
+            "https://services1.arcgis.com/CY1LXxl9zlJeBuRZ/arcgis/rest/services/Florida_COVID19_Cases/FeatureServer/0/query?f=json&where=1%3D1&returnGeometry=false&spatialRel=esriSpatialRelIntersects&outFields=*&outStatistics=%5B%7B%22statisticType%22%3A%22sum%22%2C%22onStatisticField%22%3A%22C_FLResDeaths%22%2C%22outStatisticFieldName%22%3A%22Deaths%22%7D%2C%7B%22statisticType%22%3A%22sum%22%2C%22onStatisticField%22%3A%22T_positive%22%2C%22outStatisticFieldName%22%3A%22Positive%22%7D%2C%7B%22statisticType%22%3A%22sum%22%2C%22onStatisticField%22%3A%22C_Hosp_Yes%22%2C%22outStatisticFieldName%22%3A%22Hospitalized%22%7D%2C%7B%22statisticType%22%3A%22sum%22%2C%22onStatisticField%22%3A%22T_total%22%2C%22outStatisticFieldName%22%3A%22TotalTests%22%7D%2C%7B%22statisticType%22%3A%22sum%22%2C%22onStatisticField%22%3A%22T_negative%22%2C%22outStatisticFieldName%22%3A%22Negative%22%7D%2C%7B%22statisticType%22%3A%22sum%22%2C%22onStatisticField%22%3A%22TPending%22%2C%22outStatisticFieldName%22%3A%22Pending%22%7D%5D&outSR=102100&cacheHint=true"
           );
           try {
             if(!fetchedNowStateData.data.error){
@@ -559,10 +559,10 @@ export default {
   },
   filters: {
     toLocal: function(value) {
-      return value.toLocaleString();
+      return !isNaN(value) ? value.toLocaleString() : 0;
     },
     toPercent: function(value) {
-      return (value * 100).toFixed(1);
+      return !isNaN(value) ? (value * 100).toFixed(1) : 0;
     }
   },
   computed: {
@@ -703,8 +703,8 @@ export default {
                   }
                 });
                 if(countyResults.length && countyResults[0].attributes){
-                  return countyResults[0].attributes.FLResDeaths
-                    ? parseInt(countyResults[0].attributes.FLResDeaths)
+                  return countyResults[0].attributes.C_FLResDeaths
+                    ? parseInt(countyResults[0].attributes.C_FLResDeaths)
                     : 0;
                 }else{
                   return 0
