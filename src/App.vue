@@ -10,7 +10,7 @@
             <div style="line-height:1.5;">Daily numbers from the <a
               href="https://fdoh.maps.arcgis.com/apps/opsdashboard/index.html#/8d0de33f260d444c852a615dc7837c86"
             >Florida Department of Health</a> tracking the Coronavirus progress.
-            <div class=""><small>State data is updated after approximately 11 a.m. and 6 p.m. daily.</small></div>
+            <div class=""><small>State data is updated after approximately 11 a.m. daily.</small></div>
           </div>
           <div v-if="installBtn" class="btn btn-success p-2 m-1" @click="installer()"><i class="fa fa-download"></i> Install for Latest Updates</div>
         </div>
