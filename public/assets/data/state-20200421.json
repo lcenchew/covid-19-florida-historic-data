@@ -1,1 +1,1 @@
-{"error":{"code":400,"message":"","details":["'Invalid field: C_Hosp_Yes' parameter is invalid"]}}
+{ "error": { "code": 400, "message": "", "details": ["'Invalid field: C_HospYes_Res' parameter is invalid"] } }
