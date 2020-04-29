@@ -625,8 +625,8 @@ export default {
           }
       self.selectedCounty = selectedCountyRecent;
       var gradient = document.getElementById("county-chart").getContext("2d").createLinearGradient(0, 0, 0, 450);
-      gradient.addColorStop(0, "rgba(255, 0,0, 0.5)");
-      gradient.addColorStop(0.5, "rgba(255, 0, 0, 0.25)");
+      gradient.addColorStop(0, "rgba(255, 0,0, 0.9)");
+      gradient.addColorStop(0.5, "rgba(255, 0, 0, 0.65)");
       gradient.addColorStop(1, "rgba(255, 0, 0, 0)");
       let gradientBlack = document.getElementById("county-chart2").getContext("2d").createLinearGradient(0, 0, 0, 450);
       gradientBlack.addColorStop(0, "rgba(0, 0, 0, 0.75)");
@@ -660,7 +660,7 @@ export default {
       self.selectedCountyIncreaseByDay = countyData.map((x, index) => {
         let prevDay = index >= 1 ? index - 1 : 0;
         let prevDayCnt = countyData[prevDay];
-        return self.diffChange(x, prevDayCnt);
+        return  Math.abs(self.diffChange(x, prevDayCnt));
       });
       let last3Days = justPercentNumbers.slice(Math.max(justPercentNumbers.length - 4, 0))
       let average = last3Days.reduce((a, b) => a + b) / last3Days.length;
@@ -675,21 +675,21 @@ export default {
       self.lineData = {
           labels: labels,
           datasets: [
-            {
-              label: "Total Positive",
-              backgroundColor: gradient,
-              borderColor: "#ea0000",
-              data: countyData
-            },
-            {
-              label: "Projected Cases",
-              borderColor: "#00bc8c",
-              data: projectedData,
-              borderDash: [5,3]
-            },
+            // {
+            //   label: "Total Positive",
+            //   backgroundColor: gradient,
+            //   borderColor: "#ea0000",
+            //   data: countyData
+            // },
+            // {
+            //   label: "Projected Cases",
+            //   borderColor: "#00bc8c",
+            //   data: projectedData,
+            //   borderDash: [5,3]
+            // },
             {
               label: "New Per Day",
-              backgroundColor: "#ce4307",
+              backgroundColor: gradient,
               borderColor: "#ea0000",
               data: self.selectedCountyIncreaseByDay,
               type: 'bar'
@@ -824,8 +824,8 @@ export default {
       let labels = resultsSorted.map(x => x.mmdd);
       let labelsOriginal = labels;
       let gradient = document.getElementById("state-chart").getContext("2d").createLinearGradient(0, 0, 0, 450);
-      gradient.addColorStop(0, "rgba(255, 0,0, 0.5)");
-      gradient.addColorStop(0.5, "rgba(255, 0, 0, 0.25)");
+      gradient.addColorStop(0, "rgba(255, 0,0, 0.9)");
+      gradient.addColorStop(0.5, "rgba(255, 0, 0, 0.65)");
       gradient.addColorStop(1, "rgba(255, 0, 0, 0)");
       let gradientBlack = document.getElementById("county-chart2").getContext("2d").createLinearGradient(0, 0, 0, 450);
       gradientBlack.addColorStop(0, "rgba(0, 0, 0, 0.75)");
@@ -866,21 +866,21 @@ export default {
       this.stateLineData =  {
           labels: labels,
           datasets: [
-            {
-              label: "Total Positive",
-              backgroundColor: gradient,
-              borderColor: "#ea0000",
-              data: stateCases,
-            },
-            {
-              label: "Projected Cases",
-              borderColor: "#00bc8c",
-              data: projectedData,
-              borderDash: [5,3]
-            },
+            // {
+            //   label: "Total Positive",
+            //   backgroundColor: gradient,
+            //   borderColor: "#ea0000",
+            //   data: stateCases,
+            // },
+            // {
+            //   label: "Projected Cases",
+            //   borderColor: "#00bc8c",
+            //   data: projectedData,
+            //   borderDash: [5,3]
+            // },
             {
               label: "New Per Day",
-              backgroundColor: "#ce4307",
+              backgroundColor: gradient,
               borderColor: "#ea0000",
               data: self.selectedStateIncreaseByDay,
               type: 'bar'
