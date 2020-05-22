@@ -11,7 +11,7 @@
               href="https://fdoh.maps.arcgis.com/apps/opsdashboard/index.html#/8d0de33f260d444c852a615dc7837c86"
             >Florida Department of Health</a> tracking the Coronavirus progress.
             <div class=""><small>State data is updated after approximately 11 a.m. daily.</small>
-            <p>Due to an error state data is missing from 4-12 to 4-23 - Sorry!</p></div>
+            </div>
           </div>
           <div v-if="installBtn" class="btn btn-success p-2 m-1" @click="installer()"><i class="fa fa-download"></i> Install for Latest Updates</div>
         </div>
@@ -665,12 +665,12 @@ export default {
       let last3Days = justPercentNumbers.slice(Math.max(justPercentNumbers.length - 4, 0))
       let average = last3Days.reduce((a, b) => a + b) / last3Days.length;
       self.selectedCountyAvg = average;
-      let countyLatestNum = countyData[countyData.length - 1]
-      let plusOne = self.compoundInterest(countyLatestNum, average, 1);
-      let plusTwo = self.compoundInterest(countyLatestNum, average, 2);
-      let plusThree = self.compoundInterest(countyLatestNum, average, 3);
-      projectedData = projectedData.concat(plusOne, plusTwo, plusThree);
-      labels = labels.concat("+1","+2","+3");
+      // let countyLatestNum = self.selectedCountyIncreaseByDay[self.selectedCountyIncreaseByDay.length - 1]
+      // let plusOne = self.compoundInterest(countyLatestNum, average, 1);
+      // let plusTwo = self.compoundInterest(countyLatestNum, average, 2);
+      // let plusThree = self.compoundInterest(countyLatestNum, average, 3);
+      // projectedData = projectedData.concat(plusOne, plusTwo, plusThree);
+      labels = labels.concat("+1");
       // console.log(projectedData)
       self.lineData = {
           labels: labels,
@@ -858,11 +858,12 @@ export default {
       let latestValue = stateCases[stateCases.length - 1];
       self.latestDeaths = stateDeaths[stateDeaths.length - 1];
       self.latestStateValue = latestValue;
-      let plusOne = self.compoundInterest(latestValue, average, 1);
-      let plusTwo = self.compoundInterest(latestValue, average, 2);
-      let plusThree = self.compoundInterest(latestValue, average, 3);
-      projectedData = projectedData.concat(plusOne, plusTwo, plusThree);
-      labels = labels.concat("+1","+2","+3");
+      // let plusOne = self.compoundInterest(latestValue, average, 1);
+      // let plusTwo = self.compoundInterest(latestValue, average, 2);
+      // let plusThree = self.compoundInterest(latestValue, average, 3);
+      // projectedData = projectedData.concat(plusOne, plusTwo, plusThree);
+      labels = labels.concat("+1");
+      // labels = labels.shift();
       this.stateLineData =  {
           labels: labels,
           datasets: [
@@ -1004,7 +1005,7 @@ export default {
 }
 
 .count {
-  min-width: 50px;
+  min-width: 68px;
   padding-right: 5px;
   display: inline-block;
   font-weight: bold;
