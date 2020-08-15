@@ -1,10 +1,11 @@
+name: Manual Sync Remote
 on:
   workflow_dispatch:
     inputs:
-    branch:
-      description: 'Branch to merge'     
-      required: false
-      default: 'upstream'
+      branch:
+        description: 'Branch to merge'     
+        required: false
+        default: 'upstream'
 
 jobs:
   sync_with_upstream:
