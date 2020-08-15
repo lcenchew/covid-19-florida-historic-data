@@ -1,4 +1,5 @@
 on:
+  workflow_dispatch:
   schedule:
     - cron:  '0 7 * * 1'
     # scheduled at 07:00 every Monday
