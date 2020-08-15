@@ -1,5 +1,10 @@
 on:
   workflow_dispatch:
+    inputs:
+    branch:
+      description: 'Branch to merge'     
+      required: false
+      default: 'upstream'
 
 jobs:
   sync_with_upstream:
@@ -20,7 +25,7 @@ jobs:
       with:
         upstream_repository: NickStees/covid-19-florida-historic-data
         upstream_branch: master
-        target_branch: upstream                       # optional
+        target_branch: ${{ github.event.inputs.branch }}                       # optional
         github_token: ${{ secrets.GITHUB_TOKEN }}   # optional, for accessing repos that requir authentication
         
     # Step 3: Print a helpful timestamp for your records (optional)
